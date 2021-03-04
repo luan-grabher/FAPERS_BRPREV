@@ -1,5 +1,6 @@
 package fapers_brprev.Model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,6 +71,36 @@ public class Layout {
         });
         
         return sb.toString();
+    }
+    
+    /**
+     * Retorna o mapa padrão com os valores padrões
+     * @return Retorna mapa com puts padrões
+     */
+    public static Map<String, String> getDefaultMap(){        
+        Map<String, String> map = new HashMap<>();        
+        
+        map.put("empresa", "1");
+        map.put("plano", "998");
+        map.put("perfil", "");
+        map.put("dataCD", "");
+        map.put("numeroCD", "");
+        map.put("sequencial", "");
+        map.put("sequencialContrapartida", "");
+        map.put("conta", "");
+        map.put("auxiliar", "");
+        map.put("centroCusto", "");
+        map.put("centroCusteio", "");
+        map.put("documento", "");
+        map.put("numeroDocumento", "");
+        map.put("dataDocumento", "");
+        map.put("valorLançamento", ""); //O tamanho correto é 15, mas o primeiro será 0 ou o sinal de menos
+        map.put("indicadorDebitoCredito", "D");
+        map.put("historicoPadrao", "");
+        map.put("descricaoHistorico", "");
+        map.put("observacao", "");
+        
+        return map;
     }
 
     /**
