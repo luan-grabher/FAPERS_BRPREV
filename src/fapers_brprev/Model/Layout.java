@@ -98,7 +98,7 @@ public class Layout {
         map.put("indicadorDebitoCredito", "D");
         map.put("historicoPadrao", "");
         map.put("descricaoHistorico", "");
-        map.put("observacao", "");
+        map.put("observacao", "Dominio Contábil Folha");
         
         return map;
     }

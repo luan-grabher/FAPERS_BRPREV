@@ -14,17 +14,19 @@ public class FAPERS_BRPREV {
 
     public static void main(String[] args) {
         try {
-            File payRoll = getFile("Relatório Espelho Resumo Folha de pagamento CSV");
-            File file2 = getFile("2");
-            File file3 = getFile("3");
+            //File payRoll = getFile("Relatório Espelho Resumo Folha de pagamento CSV");
+            File payRoll = new File("D:\\NetBeansProjects\\FAPERS_BRPREV\\RELATORIO_ESPELHO_RESUMO.csv");
+                    
+            //File file2 = getFile("2");
+            //File file3 = getFile("3");
             
             //Mapa com importações em String para fazer
             List<Map<String,String>> imports = new ArrayList<>();
             
             //Extrai com o modelo dos arquivos as importações
             imports.addAll(PayRoll.getImports(payRoll));
-            imports.addAll(null);
-            imports.addAll(null);
+            //imports.addAll(null);
+            //imports.addAll(null);
             
             //Salva o arquivo de texto para importação no formato do Layout correto
             FileManager.save(
@@ -33,7 +35,8 @@ public class FAPERS_BRPREV {
             );
             
         } catch (Exception e) {
-            JOptionPane.showConfirmDialog(null, "Erro: " + e.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         }                
     }
     
