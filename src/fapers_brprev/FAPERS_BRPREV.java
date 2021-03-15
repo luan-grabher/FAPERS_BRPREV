@@ -1,5 +1,6 @@
 package fapers_brprev;
 
+import fapers_brprev.Model.Accounts;
 import fapers_brprev.Model.Layout;
 import fapers_brprev.Model.PayRoll;
 import fileManager.FileManager;
@@ -17,7 +18,11 @@ public class FAPERS_BRPREV {
             //File payRoll = getFile("Relatório Espelho Resumo Folha de pagamento CSV");
             File payRoll = new File("D:\\NetBeansProjects\\FAPERS_BRPREV\\RELATORIO_ESPELHO_RESUMO.csv");
 
-            //File file2 = getFile("2");
+            //Arquivo de contas
+            File accountsFile = getFile("Arquivo CSV com contas e historicos padrões");
+            //Cria mapa de filtros de contas e historicos padroes
+            Accounts.addOnList(accountsFile);
+            
             //File file3 = getFile("3");
             //Mapa com importações em String para fazer
             List<Map<String, String>> imports = new ArrayList<>();
