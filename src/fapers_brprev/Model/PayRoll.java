@@ -49,7 +49,12 @@ public class PayRoll {
         if (!cols[colValue].equals("") && !cols[colDescription].equals("")) {
             Map<String, String> toImport = Layout.getDefaultMap();
             toImport.put("descricaoHistorico", cols[colDescription]);
-            toImport.put("valorLançamento", cols[colValue].replaceAll("\\.", "").replaceAll(",", "\\."));
+            
+            /*Define o codigo do Historico padrao com base na descricao*/
+            toImport.put("historicoPadrao", "555");
+            toImport.put("conta", "888");
+            
+            toImport.put("valorLançamento", cols[colValue].replaceAll("[^0-9]+", ""));
             toImport.put("indicadorDebitoCredito", debitCredit);
             toImport.put("dataCD", date);
             toImport.put("dataDocumento", date);
