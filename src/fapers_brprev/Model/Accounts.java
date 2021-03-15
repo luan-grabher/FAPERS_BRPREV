@@ -29,43 +29,22 @@ public class Accounts {
             }
         }
     }
-
-    /**
-     * Retorna a conta do mapa se o filtro bater
-     *
-     * @param filter Filtro de string
-     * @return conta do mapa se o filtro bater
-     */
-    public static Integer getAccount(String filter) {
-        return get("conta", filter);
-    }
-
-    /**
-     * Retorna o historicoPadrao do mapa se o filtro bater
-     *
-     * @param filter Filtro de string
-     * @return historicoPadrao do mapa se o filtro bater
-     */
-    public static Integer getDefaultHistory(String filter) {
-        return get("historicoPadrao", filter);
-    }
-
+    
     /**
      * Retorna o objeto do mapa se o filtro bater
      *
-     * @param key Nome do objeto procurado (conta ou historicoPadrao)
      * @param filter Filtro de string
      * @return objeto do mapa se o filtro bater
      */
-    public static Integer get(String key, String filter) {
-        Integer[] r = new Integer[]{0};
+    public static Map<String, Object> get(String filter) {
+        Object[] obj = new Object[]{null};
 
         list.forEach((m) -> {
             if (((StringFilter) m.get("filtro")).filterOfString(filter)) {
-                r[0] = (Integer) m.get(key);
+                obj[0] = m;
             }
         });
 
-        return r[0];
+        return (Map<String, Object>) obj[0];
     }
 }
