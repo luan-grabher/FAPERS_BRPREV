@@ -12,6 +12,16 @@ import java.util.regex.Pattern;
 
 public class PayRoll {
 
+    /**
+     * A Classe Pay Roll irá usar as informações do mapa csv das contas.
+     * Para cada mapa da lista do CSV, irá criar um lançamento em débito e um
+     * lançamento em credito com os numeros definidos e irá somar os
+     * proventos/descontos dos codigos informados.
+     * <p>
+     * <p>
+     * <p>
+     * <p>
+     */
     public static List<Map<String, String>> getImports(File file) {
         List<Map<String, String>> imports = new ArrayList<>();
 
