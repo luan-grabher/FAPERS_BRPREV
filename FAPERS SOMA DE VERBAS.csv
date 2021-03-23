@@ -1,0 +1,16 @@
+HP;Debito;Credito;Soma verbas;Descrição;Descrição verbas
+154;2064;1213;903;DESC ADIANT SAL CFE FOLHA PGTO N/MÊS;Desconto (resumo final da folha de pagamento) - Valor da verba - 903 Adiantamento
+186;2064;2161;3602;DESC CCA PGS CFE FOLHA SALARIAL N/MÊS ;Desconto (resumo final da folha de pagamento) - Valor da verba - 3602 desc. Cca pgs
+162;2064;2368;7108;DESC PARCELA EMPRÉST CFE FL SALARIAL N/MÊS ;Desconto (resumo final da folha de pagamento) - Valor da verba - 7108 desc. Emprest. Consignado
+188;2064;2488;3005;DESC PENSAO ALIMENTICIA CFE FOLHA SALARIAL N/MÊS;Desconto (resumo final da folha de pagamento) - Valor da verba - 3005 Pensão judicial
+160;2064;1219;3205+3206+3207;DESC UNIMED CFE FOLHA SALARIAL N/MÊS;Desconto (resumo final da folha de pagamento) - Valores das verbas - 3205-3206-3207
+161;2064;1219;3211;DESC UNIODONTO CFE FOLHA SALARIAL  N/MÊS;Desconto (resumo final da folha de pagamento) - Valores das verbas - 3210-3211
+159;2064;4240;821;DESC VR CFE FOLHA SALARIAL N/MÊS;Desconto (resumo final da folha de pagamento) - Valor da verba - 821 Des. Vale Refeição
+158;2064;2161;3601;RET CONTR FAPERS CFE FOLHA SALARIAL N/MÊS ;Desconto (resumo final da folha de pagamento) - Valor da verba - 3601 Desc.Fapers
+155;2064;2065;91005;RET INSS CFE FL PGTO  N/MÊS;Desconto (resumo final da folha de pagamento) - Valor da verba - 91005 INSS
+156;2064;2166;91505;RET IRRF CFE FL PGTO N/MÊS;Desconto (resumo final da folha de pagamento) - Valor da verba - 91505 IR
+171;2082;2065;91025;BX INSS PROV FERIAS CFE FOLHA SALARIAL N/MÊS;Desconto (resumo final da folha de pagamento) - Valor da verba - 91025 INSS Demonstrativo Férias
+183;2142;2166;91506;RET  IRRF S/ GRATIF REPRESENTACAO DE DIRIGENTES N/MÊS ;Desconto (resumo final da folha de pagamento) - Valor da verba - 91506 IR Pró-labore
+152;4237;2064;5+268+269+331;APROPR SALARIOS CFE FOLHA PGTO N/MÊS;Proventos (resumo final da folha de pagamento) - Soma das verbas 5-268-269-331
+144;4240;2064;320;AJUDA DE CUSTO EDUCAÇÃO;Proventos (resumo final da folha de pagamento) - verba 320 - auxilio educação
+148;4243;2072;20;APROP BOLSA AUXILIO REF ESTAGIOS NESTE MES;Proventos (resumo final da folha de pagamento) - verba 20 - salário estagiario 
