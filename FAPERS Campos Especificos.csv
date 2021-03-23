@@ -1,0 +1,8 @@
+HP;Debito;Credito;Descrição;Seção;Linha;Colunas
+164;4238;2066;APROP FGTS CFE FOLHA PGTO N/MÊS;Resumo Geral;Total FGTS;Colaboradores
+165;2142;2065;APROP INSS PATRONAL S/GRATIF REPRESENTACAO DE DIRIGENTES N/MÊS;Analitico GPS - Empresa Normal;Autonomos;Empregadores
+170;4239;2081;BX PROV FÉRIAS CFE RECIBO ;Total Geral;Total Pago;Abono + Férias
+172;2083;2066;BX FGTS REF FÉRIAS CFE FL SALARIAL N/MÊS;Total Geral;Total Pago;FGTS
+173;2064;2161;BX PROV CONTR PATR FAPERS S/FERIAS CFE FL SALARIAL   N/MÊS;Total Geral;Total Pago;RAT + TERC + INSS
+185;2064;2065;APROPR INSS S/ GRATIF DE REPRESENTACAO N/MÊS ;Analitico GPS - Empresa normal;Empregadores;Segurados
+;;;;;;
