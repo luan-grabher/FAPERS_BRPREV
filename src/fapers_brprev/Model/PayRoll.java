@@ -17,56 +17,43 @@ import sql.Database;
 public class PayRoll {
 
     private static String sqlGetAccountingEntries = FileManager.getText("./sql/getAccountingEntries.sql");
+    private static String date;
 
     /**
      * Retorna o que deve ser importado para o arquivo final
-     * @return 
+     *
+     * @return
      * @throws java.lang.Exception
      */
     public static List<Map<String, String>> getImports() throws Exception {
+        //Inicia imports
+        List<Map<String, String>> imports = new ArrayList<>();
+        date = getLastDate();
+
         //Conecta ao banco de dados
         Database.setStaticObject(new Database("./sci.cfg"));
 
         if (Database.getDatabase().testConnection()) {
             //Pega lançamentos no unico
             List<Map<String, Object>> entries = getAccountingEntries();
-            
+
             //Se nao estiver vazio
-            if(!entries.isEmpty()){
+            if (!entries.isEmpty()) {
+
                 //Percorre lançamentos
-                
-            }else{
+                entries.forEach((e) -> {
+                    /**
+                     * Pega historico e conta de debito e credito
+                     */
+                    
+                    
+                    //Adiciona debito e credito
+                    addImport(imports, date, cols, 19, 1, "C"); //PROVENTO
+                    addImport(imports, date, cols, 47, 25, "D"); //DESCONTO
+                });
+            } else {
                 throw new Exception("Nenhum lançamento encontrado neste mês!");
-            }
-            
-            List<Map<String, String>> imports = new ArrayList<>();
-
-            //Pega texto do bagulho
-            String[] lines = FileManager.getText(file).split("\r\n");
-
-            String date = getLastDate(lines[0]);
-
-            Boolean get = Boolean.FALSE;
-
-            for (String line : lines) {
-                if (line.matches("PROVENTOS ;*DESCONTOS;*")) {
-                    get = Boolean.TRUE;
-
-                    //Se estiver depois de proventos e descontos
-                } else if (get) {
-                    //Se a linha tiver alguma coisa
-                    if (!"".equals(line)) {
-                        String[] cols = line.split(";", -1);
-                        if (cols.length == 49) {
-                            addImport(imports, date, cols, 19, 1, "C"); //PROVENTO
-                            addImport(imports, date, cols, 47, 25, "D"); //DESCONTO
-                        }
-                    } else {
-                        //Sai do for pois ja pegou os provendos e descontos
-                        break;
-                    }
-                }
-            }
+            }            
 
             return imports;
         } else {
@@ -80,10 +67,10 @@ public class PayRoll {
     private static List<Map<String, Object>> getAccountingEntries() {
         Map<String, String> swaps = new HashMap<>();
         swaps.put("enterprise", "38");
-        swaps.put("year",year.toString());
-        swaps.put("month",month.toString());
-        swaps.put("lastMonthDay",getLastDay().toString());
-        
+        swaps.put("year", year.toString());
+        swaps.put("month", month.toString());
+        swaps.put("lastMonthDay", getLastDay().toString());
+
         return Database.getDatabase().getMap(sqlGetAccountingEntries, swaps);
     }
 

@@ -45,9 +45,12 @@ public class Accounts {
         Object[] obj = new Object[]{null};
 
         list.forEach((m) -> {
+            Integer unicoDebito = (Integer) m.get("unicoDebito");
+            Integer unicoCredito = (Integer) m.get("unicoCredito");
+
             if (((StringFilter) m.get("filtro")).filterOfString(history)
-                    && ((debit != null && debit.equals(m.get("unicoDebito")))
-                    || (credit != null && debit.equals(m.get("unicoCredito"))))) {
+                    && (unicoDebito != 0 && unicoDebito.equals(debit))
+                    || (unicoCredito != 0 && unicoCredito.equals(debit))) {
                 obj[0] = m;
             }
         });
