@@ -1,57 +1,95 @@
 package fapers_brprev.Model;
 
 import Dates.Dates;
+import static fapers_brprev.FAPERS_BRPREV.month;
+import static fapers_brprev.FAPERS_BRPREV.year;
 import fileManager.FileManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import sql.Database;
 
 public class PayRoll {
 
+    private static String sqlGetAccountingEntries = FileManager.getText("./sql/getAccountingEntries.sql");
+
     /**
      * Retorna o que deve ser importado para o arquivo final
+     * @return 
+     * @throws java.lang.Exception
      */
-    public static List<Map<String, String>> getImports(Integer month, Integer year) {        
-        
-        List<Map<String, String>> imports = new ArrayList<>();
+    public static List<Map<String, String>> getImports() throws Exception {
+        //Conecta ao banco de dados
+        Database.setStaticObject(new Database("./sci.cfg"));
 
-        //Pega texto do bagulho
-        String[] lines = FileManager.getText(file).split("\r\n");
+        if (Database.getDatabase().testConnection()) {
+            //Pega lançamentos no unico
+            List<Map<String, Object>> entries = getAccountingEntries();
+            
+            //Se nao estiver vazio
+            if(!entries.isEmpty()){
+                //Percorre lançamentos
+                
+            }else{
+                throw new Exception("Nenhum lançamento encontrado neste mês!");
+            }
+            
+            List<Map<String, String>> imports = new ArrayList<>();
 
-        String date = getLastDateOfMonth(lines[0]);
+            //Pega texto do bagulho
+            String[] lines = FileManager.getText(file).split("\r\n");
 
-        Boolean get = Boolean.FALSE;
+            String date = getLastDate(lines[0]);
 
-        for (String line : lines) {
-            if (line.matches("PROVENTOS ;*DESCONTOS;*")) {
-                get = Boolean.TRUE;
+            Boolean get = Boolean.FALSE;
 
-                //Se estiver depois de proventos e descontos
-            } else if (get) {
-                //Se a linha tiver alguma coisa
-                if (!"".equals(line)) {
-                    String[] cols = line.split(";", -1);
-                    if (cols.length == 49) {
-                        addImport(imports, date, cols, 19, 1, "C"); //PROVENTO
-                        addImport(imports, date, cols, 47, 25, "D"); //DESCONTO
+            for (String line : lines) {
+                if (line.matches("PROVENTOS ;*DESCONTOS;*")) {
+                    get = Boolean.TRUE;
+
+                    //Se estiver depois de proventos e descontos
+                } else if (get) {
+                    //Se a linha tiver alguma coisa
+                    if (!"".equals(line)) {
+                        String[] cols = line.split(";", -1);
+                        if (cols.length == 49) {
+                            addImport(imports, date, cols, 19, 1, "C"); //PROVENTO
+                            addImport(imports, date, cols, 47, 25, "D"); //DESCONTO
+                        }
+                    } else {
+                        //Sai do for pois ja pegou os provendos e descontos
+                        break;
                     }
-                } else {
-                    //Sai do for pois ja pegou os provendos e descontos
-                    break;
                 }
             }
-        }
 
-        return imports;
+            return imports;
+        } else {
+            throw new Exception("Erro ao conectar ao banco de dados!");
+        }
+    }
+
+    /**
+     * Retorna mapa do SQL
+     */
+    private static List<Map<String, Object>> getAccountingEntries() {
+        Map<String, String> swaps = new HashMap<>();
+        swaps.put("enterprise", "38");
+        swaps.put("year",year.toString());
+        swaps.put("month",month.toString());
+        swaps.put("lastMonthDay",getLastDay().toString());
+        
+        return Database.getDatabase().getMap(sqlGetAccountingEntries, swaps);
     }
 
     /*
     * Adiciona a importação 
-    */
+     */
     private static void addImport(List<Map<String, String>> imports, String date, String[] cols, Integer colValue, Integer colDescription, String debitCredit) {
         if (!cols[colValue].equals("") && !cols[colDescription].equals("")) {
             Map<String, String> toImport = Layout.getDefaultMap();
@@ -67,39 +105,26 @@ public class PayRoll {
             toImport.put("dataCD", date);
             toImport.put("dataDocumento", date);
             imports.add(toImport);
-            
-            
-            //Duplicar lcto para debito e credito
-            //Nome campo D/C --> indicadorDebitoCredito
         }
     }
 
     /**
+     * Retorna o último dia do mes e ano informado em integer
+     */
+    private static Integer getLastDay() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+
+        return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
      * Retonr a o último dia do mes no formato ddMMyyyy
-    */
-    private static String getLastDateOfMonth(String lineOne) {
-        Pattern pattern = Pattern.compile("[A-Z]+\\/202[1-9]");
-        Matcher matcher = pattern.matcher(lineOne);
-        Integer month = 0;
-        Integer year = 2021;
-
-        if (matcher.find()) {
-            String[] monthAndYear = matcher.group().split("/");
-
-            year = Integer.valueOf(monthAndYear[1]);
-            month = Dates.getBrazilianMonths().indexOf(monthAndYear[0]);
-
-            Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.YEAR, year);
-            cal.set(Calendar.MONTH, month);
-            cal.set(Calendar.DAY_OF_MONTH, 1);
-
-            Integer lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-            return monthWithZero(lastDay) + monthWithZero(month) + year;
-        } else {
-            return "01012021";
-        }
+     */
+    private static String getLastDate() {
+        return monthWithZero(getLastDay()) + monthWithZero(month) + year;
     }
 
     /**

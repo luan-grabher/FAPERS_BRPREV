@@ -21,28 +21,33 @@ public class Accounts {
                 String[] cols = line.split(";", -1);
 
                 Map<String, Object> map = new HashMap<>();
-                map.put("conta", Integer.valueOf(cols[0]));
-                map.put("historicoPadrao", Integer.valueOf(cols[1]));
-                map.put("filtro", new StringFilter(cols[2].replaceAll(" ", ";")));
-                map.put("contaUnico", Integer.valueOf(cols[3]));
+                map.put("debito", Integer.valueOf(cols[0]));
+                map.put("credito", Integer.valueOf(cols[1]));
+                map.put("historicoPadrao", Integer.valueOf(cols[2]));
+                map.put("filtro", new StringFilter(cols[3].replaceAll(" ", ";")));
+                map.put("unicoDebito", Integer.valueOf(cols[4]));
+                map.put("unicoCredito", Integer.valueOf(cols[5]));
 
                 list.add(map);
             }
         }
     }
-    
+
     /**
      * Retorna o objeto do mapa se o filtro bater
      *
      * @param history Filtro de string
-     * @param account Conta do unico de debito/credito
+     * @param debit Conta do unico debito, para ignorar deixe null
+     * @param credit Conta do unico credit, para ignorar deixe null
      * @return objeto do mapa se o filtro bater
      */
-    public static Map<String, Object> get(String history, Integer account) {
+    public static Map<String, Object> get(String history, Integer debit, Integer credit) {
         Object[] obj = new Object[]{null};
 
         list.forEach((m) -> {
-            if (((StringFilter) m.get("filtro")).filterOfString(history) && account.equals(m.get("contaUnico"))) {
+            if (((StringFilter) m.get("filtro")).filterOfString(history)
+                    && ((debit != null && debit.equals(m.get("unicoDebito")))
+                    || (credit != null && debit.equals(m.get("unicoCredito"))))) {
                 obj[0] = m;
             }
         });
