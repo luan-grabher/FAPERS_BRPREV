@@ -13,16 +13,10 @@ import java.util.regex.Pattern;
 public class PayRoll {
 
     /**
-     * A Classe Pay Roll irá usar as informações do mapa csv das contas.
-     * Para cada mapa da lista do CSV, irá criar um lançamento em débito e um
-     * lançamento em credito com os numeros definidos e irá somar os
-     * proventos/descontos dos codigos informados.
-     * <p>
-     * <p>
-     * <p>
-     * <p>
+     * Retorna o que deve ser importado para o arquivo final
      */
-    public static List<Map<String, String>> getImports(File file) {
+    public static List<Map<String, String>> getImports(Integer month, Integer year) {        
+        
         List<Map<String, String>> imports = new ArrayList<>();
 
         //Pega texto do bagulho
@@ -42,8 +36,8 @@ public class PayRoll {
                 if (!"".equals(line)) {
                     String[] cols = line.split(";", -1);
                     if (cols.length == 49) {
-                        putVal(imports, date, cols, 19, 1, "C"); //PROVENTO
-                        putVal(imports, date, cols, 47, 25, "D"); //DESCONTO
+                        addImport(imports, date, cols, 19, 1, "C"); //PROVENTO
+                        addImport(imports, date, cols, 47, 25, "D"); //DESCONTO
                     }
                 } else {
                     //Sai do for pois ja pegou os provendos e descontos
@@ -55,7 +49,10 @@ public class PayRoll {
         return imports;
     }
 
-    private static void putVal(List<Map<String, String>> imports, String date, String[] cols, Integer colValue, Integer colDescription, String debitCredit) {
+    /*
+    * Adiciona a importação 
+    */
+    private static void addImport(List<Map<String, String>> imports, String date, String[] cols, Integer colValue, Integer colDescription, String debitCredit) {
         if (!cols[colValue].equals("") && !cols[colDescription].equals("")) {
             Map<String, String> toImport = Layout.getDefaultMap();
             toImport.put("descricaoHistorico", cols[colDescription]);
@@ -70,9 +67,16 @@ public class PayRoll {
             toImport.put("dataCD", date);
             toImport.put("dataDocumento", date);
             imports.add(toImport);
+            
+            
+            //Duplicar lcto para debito e credito
+            //Nome campo D/C --> indicadorDebitoCredito
         }
     }
 
+    /**
+     * Retonr a o último dia do mes no formato ddMMyyyy
+    */
     private static String getLastDateOfMonth(String lineOne) {
         Pattern pattern = Pattern.compile("[A-Z]+\\/202[1-9]");
         Matcher matcher = pattern.matcher(lineOne);
@@ -98,6 +102,9 @@ public class PayRoll {
         }
     }
 
+    /**
+     * Retorna o mês com o zero na frente
+     */
     private static String monthWithZero(Integer n) {
         return (n < 10 ? "0" : "") + n;
     }

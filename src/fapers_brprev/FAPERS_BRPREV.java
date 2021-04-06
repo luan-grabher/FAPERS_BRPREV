@@ -12,25 +12,23 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 public class FAPERS_BRPREV {
+    public static Integer month = 1;
+    public static Integer year = 2021;
 
     public static void main(String[] args) {
         try {
-            //File payRoll = getFile("Relatório Espelho Resumo Folha de pagamento CSV");
-            File payRoll = new File("D:\\NetBeansProjects\\FAPERS_BRPREV\\RELATORIO_ESPELHO_RESUMO.csv");
 
             //Arquivo de contas
-            File accountsFile = getFile("Arquivo CSV com contas e historicos padrões");
+            File accountsFile = new File("./FAPERS_Accounts.csv");
+            
             //Cria mapa de filtros de contas e historicos padroes
             Accounts.addOnList(accountsFile);
-            
-            //File file3 = getFile("3");
+
             //Mapa com importações em String para fazer
             List<Map<String, String>> imports = new ArrayList<>();
-
-            //Extrai com o modelo dos arquivos as importações
-            imports.addAll(PayRoll.getImports(payRoll));
-            //imports.addAll(null);
-            //imports.addAll(null);
+            
+            //Pega lctos para importyação do banco
+            imports.addAll(null);
 
             //Salva o arquivo de texto para importação no formato do Layout correto
             String saveFilePath = System.getProperty("user.home") + "/Desktop/FAPERS_BVPREV_import.csv";
@@ -39,7 +37,7 @@ public class FAPERS_BRPREV {
                     Layout.getLayoutOfMaps(imports)
             )) {
                 JOptionPane.showMessageDialog(null, "Arquivo salvo em: \n" + saveFilePath);
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "Erro ao salvar o arquivo final!");
             };
 
@@ -47,10 +45,19 @@ public class FAPERS_BRPREV {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         System.exit(0);
     }
 
+    /**
+     * Solicita arquivo CSV para o usuário e diz que o arquivo não é valido caso
+     * não exista ou o usuário não escolha.
+     *
+     * @param name Nome do arquivo sem o '.csv'
+     * @return O arquivo escolhido
+     * @throws java.lang.Exception Causa um erro dizendo que o arquivo nao é
+     * valido
+     */
     public static File getFile(String name) throws Exception {
         JOptionPane.showMessageDialog(null, "Escolha o arquivo " + name + ":");
         File file = Selector.selectFile("", name + " - .CSV", ".csv");

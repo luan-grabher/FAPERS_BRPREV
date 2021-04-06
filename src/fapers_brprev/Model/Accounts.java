@@ -24,6 +24,7 @@ public class Accounts {
                 map.put("conta", Integer.valueOf(cols[0]));
                 map.put("historicoPadrao", Integer.valueOf(cols[1]));
                 map.put("filtro", new StringFilter(cols[2].replaceAll(" ", ";")));
+                map.put("contaUnico", Integer.valueOf(cols[3]));
 
                 list.add(map);
             }
@@ -33,14 +34,15 @@ public class Accounts {
     /**
      * Retorna o objeto do mapa se o filtro bater
      *
-     * @param filter Filtro de string
+     * @param history Filtro de string
+     * @param account Conta do unico de debito/credito
      * @return objeto do mapa se o filtro bater
      */
-    public static Map<String, Object> get(String filter) {
+    public static Map<String, Object> get(String history, Integer account) {
         Object[] obj = new Object[]{null};
 
         list.forEach((m) -> {
-            if (((StringFilter) m.get("filtro")).filterOfString(filter)) {
+            if (((StringFilter) m.get("filtro")).filterOfString(history) && account.equals(m.get("contaUnico"))) {
                 obj[0] = m;
             }
         });
