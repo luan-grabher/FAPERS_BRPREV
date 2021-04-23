@@ -51,13 +51,20 @@ public class Accounts {
             if ( //O filtro bate com o historico
                     ((StringFilter) m.get("filtro")).filterOfString(history)
                     && ( //Ou a Conta de débito é igual a do unico
-                    unicoDebito.equals(debit)
+                    (notZero(debit) && unicoDebito.equals(debit))
                     //Ou a conta de credito é igual a do unico
-                    || unicoCredito.equals(credit))) {
+                    || (notZero(credit) && unicoCredito.equals(credit)))) {
                 obj[0] = m;
             }
         });
 
         return (Map<String, Object>) obj[0];
+    }
+
+    /**
+     * Retorna se um número String não é null, em branco ou zero
+     */
+    private static Boolean notZero(String numberStr) {
+        return numberStr != null && !numberStr.equals("") && !numberStr.equals("0");
     }
 }
