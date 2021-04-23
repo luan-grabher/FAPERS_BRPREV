@@ -21,12 +21,12 @@ public class Accounts {
                 String[] cols = line.split(";", -1);
 
                 Map<String, Object> map = new HashMap<>();
-                map.put("debito", Integer.valueOf(cols[0]));
-                map.put("credito", Integer.valueOf(cols[1]));
-                map.put("historicoPadrao", Integer.valueOf(cols[2]));
+                map.put("debito", cols[0]);
+                map.put("credito", cols[1]);
+                map.put("historicoPadrao", cols[2]);
                 map.put("filtro", new StringFilter(cols[3].replaceAll(" ", ";")));
-                map.put("unicoDebito", Integer.valueOf(cols[4]));
-                map.put("unicoCredito", Integer.valueOf(cols[5]));
+                map.put("unicoDebito", cols[4]);
+                map.put("unicoCredito", cols[5]);
 
                 list.add(map);
             }
@@ -41,16 +41,19 @@ public class Accounts {
      * @param credit Conta do unico credit, para ignorar deixe null
      * @return objeto do mapa se o filtro bater
      */
-    public static Map<String, Object> get(String history, Integer debit, Integer credit) {
+    public static Map<String, Object> get(String history, String debit, String credit) {
         Object[] obj = new Object[]{null};
 
         list.forEach((m) -> {
-            Integer unicoDebito = (Integer) m.get("unicoDebito");
-            Integer unicoCredito = (Integer) m.get("unicoCredito");
+            String unicoDebito = (String) m.get("unicoDebito");
+            String unicoCredito = (String) m.get("unicoCredito");
 
-            if (((StringFilter) m.get("filtro")).filterOfString(history)
-                    && (unicoDebito != 0 && unicoDebito.equals(debit))
-                    || (unicoCredito != 0 && unicoCredito.equals(debit))) {
+            if ( //O filtro bate com o historico
+                    ((StringFilter) m.get("filtro")).filterOfString(history)
+                    && ( //Ou a Conta de débito é igual a do unico
+                    unicoDebito.equals(debit)
+                    //Ou a conta de credito é igual a do unico
+                    || unicoCredito.equals(credit))) {
                 obj[0] = m;
             }
         });

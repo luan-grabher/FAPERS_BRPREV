@@ -4,7 +4,6 @@ import fapers_brprev.Model.Accounts;
 import fapers_brprev.Model.Layout;
 import fapers_brprev.Model.PayRoll;
 import fileManager.FileManager;
-import fileManager.Selector;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +13,7 @@ import javax.swing.JOptionPane;
 public class FAPERS_BRPREV {
     public static Integer month = 1;
     public static Integer year = 2021;
+    public static StringBuilder log = new StringBuilder();
 
     public static void main(String[] args) {
         try {
@@ -21,51 +21,45 @@ public class FAPERS_BRPREV {
             //Arquivo de contas
             File accountsFile = new File("./FAPERS_Accounts.csv");
             
-            //Cria mapa de filtros de contas e historicos padroes
-            Accounts.addOnList(accountsFile);
+            if(accountsFile.exists()){
+                //Cria mapa de filtros de contas e historicos padroes
+                Accounts.addOnList(accountsFile);
+                
+                //Pega mes e ano
+                month = Integer.valueOf(JOptionPane.showInputDialog("Insira o mês:"));
+                year = Integer.valueOf(JOptionPane.showInputDialog("Insira o ano:"));
 
-            //Mapa com importações em String para fazer
-            List<Map<String, String>> imports = new ArrayList<>();
-            
-            //Pega lctos para importyação do banco
-            imports.addAll(null);
+                //Mapa com importações em String para fazer
+                List<Map<String, String>> imports = new ArrayList<>();
 
-            //Salva o arquivo de texto para importação no formato do Layout correto
-            String saveFilePath = System.getProperty("user.home") + "/Desktop/FAPERS_BVPREV_import.csv";
-            if (FileManager.save(
-                    saveFilePath,
-                    Layout.getLayoutOfMaps(imports)
-            )) {
-                JOptionPane.showMessageDialog(null, "Arquivo salvo em: \n" + saveFilePath);
-            } else {
-                JOptionPane.showMessageDialog(null, "Erro ao salvar o arquivo final!");
-            };
+                //Pega lctos para importyação do banco
+                imports.addAll(PayRoll.getImports());
 
+                //Salva o arquivo de texto para importação no formato do Layout correto
+                File desktopPath = new File(System.getProperty("user.home") + "/Desktop/");
+                if (FileManager.save(
+                        desktopPath,
+                        "FAPERS_BVPREV_import.csv",
+                        Layout.getLayoutOfMaps(imports)
+                )) {
+                    if(!"".equals(log.toString())){
+                        FileManager.save(accountsFile, "LOG_FAPERS.txt", log.toString());
+                        JOptionPane.showMessageDialog(null, "Arquivo de Log salvo na área de trabalho");
+                    }
+                    
+                    JOptionPane.showMessageDialog(null, "Arquivo layout de importação salvo na área de trabalho");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Erro ao salvar o arquivo final!");
+                };
+            }else{
+                throw new Exception("O arquivo 'FAPERS_Accounts.csv' não existe na pasta do programa!");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         }
 
         System.exit(0);
-    }
-
-    /**
-     * Solicita arquivo CSV para o usuário e diz que o arquivo não é valido caso
-     * não exista ou o usuário não escolha.
-     *
-     * @param name Nome do arquivo sem o '.csv'
-     * @return O arquivo escolhido
-     * @throws java.lang.Exception Causa um erro dizendo que o arquivo nao é
-     * valido
-     */
-    public static File getFile(String name) throws Exception {
-        JOptionPane.showMessageDialog(null, "Escolha o arquivo " + name + ":");
-        File file = Selector.selectFile("", name + " - .CSV", ".csv");
-        if (file == null || Selector.verifyFile(file.getPath(), true, ".csv")) {
-            return file;
-        } else {
-            throw new Exception("O arquivo " + name + " não é válido");
-        }
-    }
+    }    
 
 }

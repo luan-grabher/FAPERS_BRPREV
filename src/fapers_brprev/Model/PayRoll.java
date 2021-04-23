@@ -1,28 +1,30 @@
 package fapers_brprev.Model;
 
-import Dates.Dates;
 import static fapers_brprev.FAPERS_BRPREV.month;
 import static fapers_brprev.FAPERS_BRPREV.year;
 import fileManager.FileManager;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import sql.Database;
 
 public class PayRoll {
 
-    private static String sqlGetAccountingEntries = FileManager.getText("./sql/getAccountingEntries.sql");
+    private static String sqlGetAccountingEntries = FileManager.getText("./sql/get_FAPERS_monthEntries.sql");
     private static String date;
 
     /**
+     * COISAS PARA FAZER:
+     * - 
+     */
+    
+    
+    /**
      * Retorna o que deve ser importado para o arquivo final
      *
-     * @return
+     * @return lista com mapa do que deve ser importado
      * @throws java.lang.Exception
      */
     public static List<Map<String, String>> getImports() throws Exception {
@@ -39,21 +41,23 @@ public class PayRoll {
 
             //Se nao estiver vazio
             if (!entries.isEmpty()) {
-
                 //Percorre lançamentos
                 entries.forEach((e) -> {
                     /**
                      * Pega historico e conta de debito e credito
                      */
-                    
-                    
+                    String historico = (String) e.get("historico");
+                    String value = String.valueOf(e.get("valor"));
+
+                    Map<String, Object> account = Accounts.get(historico, e.get("debito").toString(), e.get("credito").toString());
+
                     //Adiciona debito e credito
-                    addImport(imports, date, cols, 19, 1, "C"); //PROVENTO
-                    addImport(imports, date, cols, 47, 25, "D"); //DESCONTO
+                    addImport(imports, value, historico, "D", (String) account.get("debito"), (String) account.get("historicoPadrao"));
+                    addImport(imports, value, historico, "C", (String) account.get("credito"), (String) account.get("historicoPadrao"));
                 });
             } else {
                 throw new Exception("Nenhum lançamento encontrado neste mês!");
-            }            
+            }
 
             return imports;
         } else {
@@ -62,14 +66,14 @@ public class PayRoll {
     }
 
     /**
-     * Retorna mapa do SQL
+     * Retorna mapa do SQL com lctos do mes
      */
     private static List<Map<String, Object>> getAccountingEntries() {
         Map<String, String> swaps = new HashMap<>();
         swaps.put("enterprise", "38");
         swaps.put("year", year.toString());
         swaps.put("month", month.toString());
-        swaps.put("lastMonthDay", getLastDay().toString());
+        swaps.put("lastDayOfMonth", getLastDay().toString());
 
         return Database.getDatabase().getMap(sqlGetAccountingEntries, swaps);
     }
@@ -77,47 +81,53 @@ public class PayRoll {
     /*
     * Adiciona a importação 
      */
-    private static void addImport(List<Map<String, String>> imports, String date, String[] cols, Integer colValue, Integer colDescription, String debitCredit) {
-        if (!cols[colValue].equals("") && !cols[colDescription].equals("")) {
-            Map<String, String> toImport = Layout.getDefaultMap();
-            toImport.put("descricaoHistorico", cols[colDescription]);
+    private static void addImport(List<Map<String, String>> imports, String value, String history, String debitCredit, String historyCode, String account) {
+        Map<String, String> toImport = Layout.getDefaultMap();
+        toImport.put("descricaoHistorico", history);
 
-            /*Define o codigo do Historico padrao com base na descricao*/
-            Map<String, Object> filter = Accounts.get(cols[colDescription]);
-            toImport.put("historicoPadrao", filter != null ? String.valueOf(filter.get("historicoPadrao")) : "0");
-            toImport.put("conta", filter != null ? String.valueOf(filter.get("conta")) : "0");
+        toImport.put("historicoPadrao", historyCode);
+        toImport.put("conta", account);
 
-            toImport.put("valorLançamento", cols[colValue].replaceAll("[^0-9]+", ""));
-            toImport.put("indicadorDebitoCredito", debitCredit);
-            toImport.put("dataCD", date);
-            toImport.put("dataDocumento", date);
-            imports.add(toImport);
-        }
+        toImport.put("valorLançamento", value.replaceAll("[^0-9]+", ""));
+        toImport.put("indicadorDebitoCredito", debitCredit);
+        toImport.put("dataCD", date);
+        toImport.put("dataDocumento", date);
+        imports.add(toImport);
+
+    }
+
+    /**
+     * Retorna o último dia do mes e ano informado em Calendar
+     */
+    private static Calendar getLastCal() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+        return cal;
     }
 
     /**
      * Retorna o último dia do mes e ano informado em integer
      */
     private static Integer getLastDay() {
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.MONTH, month);
-        cal.set(Calendar.DAY_OF_MONTH, 1);
-
-        return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        return getLastCal().get(Calendar.DAY_OF_MONTH);
     }
 
     /**
      * Retonr a o último dia do mes no formato ddMMyyyy
      */
     private static String getLastDate() {
-        return monthWithZero(getLastDay()) + monthWithZero(month) + year;
+        return zeroPrepend(getLastDay()) + zeroPrepend(month) + year;
     }
 
     /**
-     * Retorna o mês com o zero na frente
+     * Retorna o numero com o zero na frente se for menor que 10
      */
-    private static String monthWithZero(Integer n) {
+    private static String zeroPrepend(Integer n) {
         return (n < 10 ? "0" : "") + n;
     }
 }
