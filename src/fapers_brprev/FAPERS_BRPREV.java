@@ -45,7 +45,7 @@ public class FAPERS_BRPREV {
                         Layout.getLayoutOfMaps(imports)
                 )) {
                     if (!"".equals(log.toString())) {
-                        FileManager.save(desktopPath, "LOG_FAPERS.txt", log.toString());
+                        FileManager.save(desktopPath, "LOG_FAPERS.csv", log.toString());
                         JOptionPane.showMessageDialog(
                                 null,
                                 "Alguns lançamentos não foram para o arquivo de layout porque não foram encontrados no arquivo de contas."

@@ -13,8 +13,9 @@ import sql.Database;
 
 public class PayRoll {
 
-    private static String sqlGetAccountingEntries = FileManager.getText("./sql/get_FAPERS_monthEntries.sql");
+    private static final String sqlGetAccountingEntries = FileManager.getText("./sql/get_FAPERS_monthEntries.sql");
     private static String date;
+    private static final List<Map<String, String>> imports = new ArrayList<>();
 
     /**
      * COISAS PARA FAZER:
@@ -26,9 +27,8 @@ public class PayRoll {
      * @return lista com mapa do que deve ser importado
      * @throws java.lang.Exception
      */
-    public static List<Map<String, String>> getImports() throws Exception {
-        //Inicia imports
-        List<Map<String, String>> imports = new ArrayList<>();
+    public static List<Map<String, String>> getImports() throws Exception {        
+        
         date = getLastDate();
 
         //Conecta ao banco de dados
@@ -38,6 +38,9 @@ public class PayRoll {
             //Pega lançamentos no unico
             List<Map<String, Object>> entries = getAccountingEntries();
 
+            //Não Encontardros
+            StringBuilder notFindFilter = new StringBuilder();
+
             //Se nao estiver vazio
             if (!entries.isEmpty()) {
                 //Percorre lançamentos
@@ -45,25 +48,37 @@ public class PayRoll {
                     /**
                      * Pega historico e conta de debito e credito
                      */
-                    String historico = (String) e.get("historico");
-                    String value = String.valueOf(e.get("valor"));
+                    String historico = (String) e.getOrDefault("HISTORICO","");
+                    String value = String.valueOf(e.getOrDefault("VALOR","0.00"));
+                    String debito =  e.get("DEBITO") != null? e.get("DEBITO").toString():"";
+                    String credito = e.get("CREDITO")!= null? e.get("CREDITO").toString():"";
 
-                    Map<String, Object> account = Accounts.get(historico, e.get("debito").toString(), e.get("credito").toString());
+                    Map<String, Object> account = Accounts.get(historico, debito, credito);
 
                     if (account != null) {
                         //Adiciona debito e credito
-                        addImport(imports, value, historico, "D", (String) account.get("debito"), (String) account.get("historicoPadrao"));
-                        addImport(imports, value, historico, "C", (String) account.get("credito"), (String) account.get("historicoPadrao"));
-                    }else{
-                        log.append("\nNão foi encontrado no arquivo de contas o "
-                                + "HP, credito e debito para o lcto com Historico '")
+                        addImport( value, historico, "D", (String) account.get("debito"), (String) account.get("historicoPadrao"));
+                        addImport(value, historico, "C", (String) account.get("credito"), (String) account.get("historicoPadrao"));
+                    } else {
+                        notFindFilter
+                                .append("\r\n")
                                 .append(historico)
-                                .append("', credito (").append(e.get("credito").toString())
-                                .append("), debito (").append(e.get("debito").toString());
+                                .append(";")
+                                .append(e.getOrDefault("CREDITO",0))
+                                .append(";")
+                                .append(e.getOrDefault("DEBITO",0));
                     }
                 });
             } else {
                 throw new Exception("Nenhum lançamento encontrado neste mês!");
+            }
+
+            if (!"".equals(notFindFilter.toString())) {
+                log
+                        .append("Não foi encontrado no arquivo de contas ")
+                        .append("HP, credito e debito para os lctos:")
+                        .append("\r\nHISTORICO;CREDITO FAPERS;DEBITO FAPERS")
+                        .append(notFindFilter);
             }
 
             return imports;
@@ -88,7 +103,7 @@ public class PayRoll {
     /*
     * Adiciona a importação 
      */
-    private static void addImport(List<Map<String, String>> imports, String value, String history, String debitCredit, String historyCode, String account) {
+    private static void addImport(String value, String history, String debitCredit, String historyCode, String account) {
         Map<String, String> toImport = Layout.getDefaultMap();
         toImport.put("descricaoHistorico", history);
 
@@ -109,7 +124,7 @@ public class PayRoll {
     private static Calendar getLastCal() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.MONTH, month - 1);
         cal.set(Calendar.DAY_OF_MONTH, 1);
 
         cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
