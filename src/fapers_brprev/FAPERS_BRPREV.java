@@ -45,8 +45,9 @@ public class FAPERS_BRPREV {
                     "FAPERS_BVPREV_import.csv",
                     Layout.getLayoutOfMaps(imports)
             )) {
+                Accounts.printNotFindInLog();
                 if (!"".equals(log.toString())) {
-                    FileManager.save(desktopPath, "LOG_FAPERS.csv", log.toString());
+                    FileManager.save(desktopPath, "LOG_FAPERS.txt", log.toString());
                     JOptionPane.showMessageDialog(
                             null,
                             "Alguns lançamentos não foram para o arquivo de layout porque não foram encontrados debito, credito ou historico nos arquivos de DE_PARA."
@@ -59,6 +60,7 @@ public class FAPERS_BRPREV {
                     //Abre o arquivo de contas para a pessoa completar
                     Desktop.getDesktop().open(accountsFile);
                     Desktop.getDesktop().open(hpFile);
+                    Desktop.getDesktop().open(new File(desktopPath + "/LOG_FAPERS.txt"));
                 }
 
                 JOptionPane.showMessageDialog(null, "Arquivo layout de importação salvo na área de trabalho");

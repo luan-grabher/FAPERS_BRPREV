@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Accounts {
+    
+    private static final Map<String,String> notFind = new HashMap<>();
 
     private static final Map<String, String> accountsMap = new HashMap<>();
     private static final Map<StringFilter, String> hpMap = new HashMap<>();
@@ -59,8 +61,8 @@ public class Accounts {
      * @return objeto do mapa se o filtro bater
      */
     public static Map<String, Object> get(String history, String debit, String credit) {
-        if (notZero(debit) && accountsMap.containsKey(debit)) {
-            if (notZero(credit) && accountsMap.containsKey(credit)) {
+        if (isZero(debit) && accountsMap.containsKey(debit)) {
+            if (isZero(credit) && accountsMap.containsKey(credit)) {
                 //Procura historico
                 for (Map.Entry<StringFilter, String> entry : hpMap.entrySet()) {
                     StringFilter filter = entry.getKey();
@@ -75,22 +77,28 @@ public class Accounts {
                 }
 
                 //Se não encontrar o historico
-                log.append("HISTORICO '").append(credit).append("'(UNICO) não encontrado para DE_PARA\r\n");
+                notFind.put(history, "Historico");                
                 return null;
             } else {
-                log.append("Conta ").append(credit).append("(FAPERS) não encontrada para DE_PARA\r\n");
+                notFind.put(credit, "Conta");                
                 return null;
             }
         } else {
-            log.append("Conta ").append(debit).append("(FAPERS) não encontrada para DE_PARA\r\n");
+            notFind.put(debit, "Conta");
             return null;
         }
+    }
+    
+    public static void printNotFindInLog(){
+        notFind.forEach((what, type)->{
+            log.append("\r\n").append(type).append(" ").append(what).append("(UNICO) não encontrado nos arquivos DE_PARA.");
+        });
     }
 
     /**
      * Retorna se um número String não é null, em branco ou zero
      */
-    private static Boolean notZero(String numberStr) {
-        return numberStr != null && !numberStr.equals("") && !numberStr.equals("0");
+    private static Boolean isZero(String numberStr) {
+        return numberStr == null || numberStr.equals("") || numberStr.trim().equals("0");
     }
 }
