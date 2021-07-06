@@ -73,7 +73,7 @@ public class Accounts {
                         Map<String, String> r = new HashMap<>();
                         r.put("debit", accountsMap.getOrDefault(debit, null));
                         r.put("credit", accountsMap.getOrDefault(credit, null));
-                        r.put("hp", accountsMap.get(hp));
+                        r.put("hp", hp);
                         
                         return r;
                     }

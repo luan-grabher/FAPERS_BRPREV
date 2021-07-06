@@ -14,7 +14,7 @@ Anuenio;202
 Anuenio Congelado;202
 avos Abono;110
 avos Ferias;110
-avos FGTSsalario;110
+avos FGTS salario;110
 avos INSS Ferias;110
 avos RAT Ferias;110
 avos TERC Ferias;110
@@ -53,3 +53,12 @@ Liquido GPS Folha Normal;202
 Pensao judicial;103
 Salario Estagiario;201
 Salario Mensalista;202
+avos RAT salario;202
+Acerto FGTS salario;202
+Acerto RAT salario;202
+avos TERC salario;202
+avos salario;202
+avos FGTS salario;202
+Acerto salario;202
+Demonstrativo adto salario;202
+Acerto TERC salario;202

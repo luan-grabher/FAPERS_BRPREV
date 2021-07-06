@@ -50,7 +50,7 @@ public class PayRoll {
 
                     Map<String, String> account = Accounts.get(historico, debito, credito);
 
-                    if (account != null) {
+                    if (account != null && account.get("hp") != null) {
                         //Adiciona debito e credito
                         if (account.get("debit") != null) {
                             addImport(value, historico, "D", account.get("debit"), account.get("hp"));
@@ -99,7 +99,6 @@ public class PayRoll {
         toImport.put("dataCD", date);
         toImport.put("dataDocumento", date);
         imports.add(toImport);
-
     }
 
     /**
