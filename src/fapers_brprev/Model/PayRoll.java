@@ -1,6 +1,5 @@
 package fapers_brprev.Model;
 
-import static fapers_brprev.FAPERS_BRPREV.log;
 import static fapers_brprev.FAPERS_BRPREV.month;
 import static fapers_brprev.FAPERS_BRPREV.year;
 import fileManager.FileManager;
@@ -36,10 +35,7 @@ public class PayRoll {
 
         if (Database.getDatabase().testConnection()) {
             //Pega lançamentos no unico
-            List<Map<String, Object>> entries = getAccountingEntries();
-
-            //Não Encontardros
-            StringBuilder notFindFilter = new StringBuilder();
+            List<Map<String, Object>> entries = getAccountingEntries();            
 
             //Se nao estiver vazio
             if (!entries.isEmpty()) {
@@ -57,28 +53,12 @@ public class PayRoll {
 
                     if (account != null) {
                         //Adiciona debito e credito
-                        addImport( value, historico, "D", (String) account.get("debito"), (String) account.get("historicoPadrao"));
-                        addImport(value, historico, "C", (String) account.get("credito"), (String) account.get("historicoPadrao"));
-                    } else {
-                        notFindFilter
-                                .append("\r\n")
-                                .append(historico)
-                                .append(";")
-                                .append(e.getOrDefault("CREDITO",0))
-                                .append(";")
-                                .append(e.getOrDefault("DEBITO",0));
+                        addImport( value, historico, "D", (String) account.get("debit"), (String) account.get("hp"));
+                        addImport(value, historico, "C", (String) account.get("credit"), (String) account.get("hp"));
                     }
                 });
             } else {
                 throw new Exception("Nenhum lançamento encontrado neste mês!");
-            }
-
-            if (!"".equals(notFindFilter.toString())) {
-                log
-                        .append("Não foi encontrado no arquivo de contas ")
-                        .append("HP, credito e debito para os lctos:")
-                        .append("\r\nHISTORICO;CREDITO FAPERS;DEBITO FAPERS")
-                        .append(notFindFilter);
             }
 
             return imports;
@@ -103,7 +83,7 @@ public class PayRoll {
     /*
     * Adiciona a importação 
      */
-    private static void addImport(String value, String history, String debitCredit, String historyCode, String account) {
+    private static void addImport(String value, String history, String debitCredit, String account, String historyCode) {
         Map<String, String> toImport = Layout.getDefaultMap();
         toImport.put("descricaoHistorico", history);
 

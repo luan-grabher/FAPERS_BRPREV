@@ -1,34 +1,51 @@
 package fapers_brprev.Model;
 
+import static fapers_brprev.FAPERS_BRPREV.log;
 import fileManager.FileManager;
 import fileManager.StringFilter;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Accounts {
 
-    private static List<Map<String, Object>> list = new ArrayList<>();
+    private static final Map<String, String> accountsMap = new HashMap<>();
+    private static final Map<StringFilter, String> hpMap = new HashMap<>();
 
-    public static void addOnList(File file) {
-        String text = FileManager.getText(file);
-        String[] lines = text.split("\r\n");
+    /*Cria mapa com endereçamento da fapers para a conta do único*/
+    public static void createAccountsMap(File file) {
+        String[] rows = FileManager.getText(file).split("\r\n");
 
-        for (String line : lines) {
-            if (!line.startsWith("#")) {
-                String[] cols = line.split(";", -1);
+        for (String row : rows) {
+            if (!row.startsWith("#")) {
+                String[] cols = row.split(";", -1);
 
-                Map<String, Object> map = new HashMap<>();
-                map.put("debito", cols[0]);
-                map.put("credito", cols[1]);
-                map.put("historicoPadrao", cols[2]);
-                map.put("filtro", new StringFilter(cols[3].replaceAll(" ", ";")));
-                map.put("unicoDebito", cols[4]);
-                map.put("unicoCredito", cols[5]);
+                if (!"".equals(cols[0]) && !"".equals(cols[1])) {
+                    /*
+                        0 - Conta fapers
+                        1 - Conta Unico 
+                     */
+                    accountsMap.put(cols[0], cols[1]);
+                }
+            }
+        }
+    }
 
-                list.add(map);
+    /*Cria mapa com filtros e seus historicos padroes*/
+    public static void createHpMap(File file) {
+        String[] rows = FileManager.getText(file).split("\r\n");
+
+        for (String row : rows) {
+            if (!row.startsWith("#")) {
+                String[] cols = row.split(";", -1);
+
+                if (!"".equals(cols[0]) && !"".equals(cols[1])) {
+                    /*
+                        0 - filtro hp
+                        1 - fapers codigo historico 
+                     */
+                    hpMap.put(new StringFilter(cols[0].replaceAll(" ", ";")), cols[1]);
+                }
             }
         }
     }
@@ -36,29 +53,38 @@ public class Accounts {
     /**
      * Retorna o objeto do mapa se o filtro bater
      *
-     * @param history Filtro de string
+     * @param history Historico unico
      * @param debit Conta do unico debito, para ignorar deixe null
      * @param credit Conta do unico credit, para ignorar deixe null
      * @return objeto do mapa se o filtro bater
      */
     public static Map<String, Object> get(String history, String debit, String credit) {
-        Object[] obj = new Object[]{null};
+        if (notZero(debit) && accountsMap.containsKey(debit)) {
+            if (notZero(credit) && accountsMap.containsKey(credit)) {
+                //Procura historico
+                for (Map.Entry<StringFilter, String> entry : hpMap.entrySet()) {
+                    StringFilter filter = entry.getKey();
+                    String hp = entry.getValue();
 
-        list.forEach((m) -> {
-            String unicoDebito = (String) m.get("unicoDebito");
-            String unicoCredito = (String) m.get("unicoCredito");
+                    if (filter.filterOfString(history)) {
+                        Map<String, String> r = new HashMap<>();
+                        r.put("debit", accountsMap.get(debit));
+                        r.put("credit", accountsMap.get(credit));
+                        r.put("hp", accountsMap.get(hp));
+                    }
+                }
 
-            if ( //O filtro bate com o historico
-                    ((StringFilter) m.get("filtro")).filterOfString(history)
-                    && ( //Ou a Conta de débito é igual a do unico
-                    (notZero(debit) && unicoDebito.equals(debit))
-                    //Ou a conta de credito é igual a do unico
-                    || (notZero(credit) && unicoCredito.equals(credit)))) {
-                obj[0] = m;
+                //Se não encontrar o historico
+                log.append("HISTORICO '").append(credit).append("'(UNICO) não encontrado para DE_PARA\r\n");
+                return null;
+            } else {
+                log.append("Conta ").append(credit).append("(FAPERS) não encontrada para DE_PARA\r\n");
+                return null;
             }
-        });
-
-        return (Map<String, Object>) obj[0];
+        } else {
+            log.append("Conta ").append(debit).append("(FAPERS) não encontrada para DE_PARA\r\n");
+            return null;
+        }
     }
 
     /**
