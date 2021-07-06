@@ -81,15 +81,14 @@ public class Accounts {
 
                 //Se não encontrar o historico
                 notFind.put(history.replaceAll("[^a-zA-Z ]", "").split(" col ")[0].trim(), "Historico");
-                return null;
             } else {
                 notFind.put(credit, "Conta");
-                return null;
             }
         } else {
-            notFind.put(debit, "Conta");
-            return null;
+            notFind.put(debit, "Conta");            
         }
+        
+        return null;
     }
 
     public static void notFindToFiles(File accountsFile, File hpFile) {
