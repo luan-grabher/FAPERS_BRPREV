@@ -1,15 +1,15 @@
 package fapers_brprev.Model;
 
-import static fapers_brprev.FAPERS_BRPREV.log;
 import fileManager.FileManager;
 import fileManager.StringFilter;
 import java.io.File;
+import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Accounts {
 
-    private static final Map<String, String> notFind = new HashMap<>();
+    public static final Map<String, String> notFind = new HashMap<>();
 
     private static final Map<String, String> accountsMap = new HashMap<>();
     private static final Map<StringFilter, String> hpMap = new HashMap<>();
@@ -64,6 +64,7 @@ public class Accounts {
         if (isZero(debit) || accountsMap.containsKey(debit)) {
             if (isZero(credit) || accountsMap.containsKey(credit)) {
                 //Procura historico
+                history = removerAcentos(history).trim();
                 for (Map.Entry<StringFilter, String> entry : hpMap.entrySet()) {
                     StringFilter filter = entry.getKey();
                     String hp = entry.getValue();
@@ -77,7 +78,7 @@ public class Accounts {
                 }
 
                 //Se não encontrar o historico
-                notFind.put(history, "Historico");
+                notFind.put(history.replaceAll("[^a-zA-Z ]", "").split(" col ")[0].trim(), "Historico");
                 return null;
             } else {
                 notFind.put(credit, "Conta");
@@ -89,10 +90,30 @@ public class Accounts {
         }
     }
 
-    public static void printNotFindInLog() {
-        notFind.forEach((what, type) -> {
-            log.append("\r\n").append(type).append(" '").append(what).append("'(UNICO) não encontrado nos arquivos DE_PARA.");
-        });
+    public static void notFindToFiles(File accountsFile, File hpFile) {
+        //Se tiver algum não encontrado
+        if (notFind.size() > 0) {
+            //Pega texto dos arquivos
+            StringBuilder accountsText = new StringBuilder(FileManager.getText(accountsFile));
+            StringBuilder hpText = new StringBuilder(FileManager.getText(hpFile));
+
+            //Adiciona abaixo do texto as linhas nao encontradas
+            notFind.forEach((what, type) -> {
+                if (type.equals("Historico")) {
+                    hpText.append("\r\n").append(what).append(";");
+                } else {
+                    accountsText.append("\r\n").append(what).append(";;");
+                }
+            });
+            
+            //Salva os arquivos
+            FileManager.save(accountsFile, accountsText.toString());
+            FileManager.save(hpFile, hpText.toString());
+        }
+    }
+
+    public static String removerAcentos(String str) {
+        return Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
     /**

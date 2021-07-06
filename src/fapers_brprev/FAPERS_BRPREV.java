@@ -15,7 +15,6 @@ public class FAPERS_BRPREV {
 
     public static Integer month = 1;
     public static Integer year = 2021;
-    public static StringBuilder log = new StringBuilder();
 
     public static void main(String[] args) {
         try {
@@ -45,14 +44,15 @@ public class FAPERS_BRPREV {
                     "FAPERS_BVPREV_import.csv",
                     Layout.getLayoutOfMaps(imports)
             )) {
-                Accounts.printNotFindInLog();
-                if (!"".equals(log.toString())) {
-                    FileManager.save(desktopPath, "LOG_FAPERS.txt", log.toString());
+                //Se tiver alguma conta/historico nao encontrado
+                if (Accounts.notFind.size() > 0) {
+                    Accounts.notFindToFiles(accountsFile, hpFile);;
+                    
                     JOptionPane.showMessageDialog(
                             null,
                             "Alguns lançamentos não foram para o arquivo de layout porque não foram encontrados debito, credito ou historico nos arquivos de DE_PARA."
-                            + "\nSalvei um log na sua area de trabalho informando quais não foram importados."
                             + "\nEstou abrindo para você completar o arquivo de contas e de historicos."
+                            + "\nComplete as colunas que estiverem em branco."
                             + "\nPreencha o campo de histórico com os termos que o historico deve ter separados por espaços."
                             + "\nPreencha as contas da FAPERS e a correspondente do UNICO, o nome da conta não é obrigatório, é apenas para identificação."
                     );
@@ -60,7 +60,6 @@ public class FAPERS_BRPREV {
                     //Abre o arquivo de contas para a pessoa completar
                     Desktop.getDesktop().open(accountsFile);
                     Desktop.getDesktop().open(hpFile);
-                    Desktop.getDesktop().open(new File(desktopPath + "/LOG_FAPERS.txt"));
                 }
 
                 JOptionPane.showMessageDialog(null, "Arquivo layout de importação salvo na área de trabalho");
