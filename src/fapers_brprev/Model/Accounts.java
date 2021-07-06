@@ -46,7 +46,7 @@ public class Accounts {
                         0 - filtro hp
                         1 - fapers codigo historico 
                      */
-                    hpMap.put(new StringFilter(cols[0].replaceAll(" ", ";")), cols[1]);
+                    hpMap.put(new StringFilter(removerAcentos(cols[0]).trim().replaceAll(" ", ";")), cols[1]);
                 }
             }
         }
@@ -60,7 +60,7 @@ public class Accounts {
      * @param credit Conta do unico credit, para ignorar deixe null
      * @return objeto do mapa se o filtro bater
      */
-    public static Map<String, Object> get(String history, String debit, String credit) {
+    public static Map<String, String> get(String history, String debit, String credit) {
         if (isZero(debit) || accountsMap.containsKey(debit)) {
             if (isZero(credit) || accountsMap.containsKey(credit)) {
                 //Procura historico
@@ -74,6 +74,8 @@ public class Accounts {
                         r.put("debit", accountsMap.getOrDefault(debit, null));
                         r.put("credit", accountsMap.getOrDefault(credit, null));
                         r.put("hp", accountsMap.get(hp));
+                        
+                        return r;
                     }
                 }
 

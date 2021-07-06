@@ -17,8 +17,7 @@ public class PayRoll {
     private static final List<Map<String, String>> imports = new ArrayList<>();
 
     /**
-     * COISAS PARA FAZER:
-     * -
+     * COISAS PARA FAZER: -
      */
     /**
      * Retorna o que deve ser importado para o arquivo final
@@ -26,8 +25,8 @@ public class PayRoll {
      * @return lista com mapa do que deve ser importado
      * @throws java.lang.Exception
      */
-    public static List<Map<String, String>> getImports() throws Exception {        
-        
+    public static List<Map<String, String>> getImports() throws Exception {
+
         date = getLastDate();
 
         //Conecta ao banco de dados
@@ -35,30 +34,30 @@ public class PayRoll {
 
         if (Database.getDatabase().testConnection()) {
             //Pega lançamentos no unico
-            List<Map<String, Object>> entries = getAccountingEntries();            
+            List<Map<String, Object>> entries = getAccountingEntries();
 
             //Se nao estiver vazio
             if (!entries.isEmpty()) {
                 //Percorre lançamentos
-                entries.forEach((e) -> {
+                entries.forEach((Map<String, Object> e) -> {
                     /**
                      * Pega historico e conta de debito e credito
                      */
-                    String historico = (String) e.getOrDefault("HISTORICO","");
-                    String value = String.valueOf(e.getOrDefault("VALOR","0.00"));
-                    String debito =  e.get("DEBITO") != null? e.get("DEBITO").toString():"";
-                    String credito = e.get("CREDITO")!= null? e.get("CREDITO").toString():"";
+                    String historico = (String) e.getOrDefault("HISTORICO", "");
+                    String value = String.valueOf(e.getOrDefault("VALOR", "0.00"));
+                    String debito = e.get("DEBITO") != null ? e.get("DEBITO").toString() : "";
+                    String credito = e.get("CREDITO") != null ? e.get("CREDITO").toString() : "";
 
-                    Map<String, Object> account = Accounts.get(historico, debito, credito);
+                    Map<String, String> account = Accounts.get(historico, debito, credito);
 
                     if (account != null) {
                         //Adiciona debito e credito
-                        if(account.get("debit") != null){
-                            addImport( value, historico, "D", (String) account.get("debit"), (String) account.get("hp"));
+                        if (account.get("debit") != null) {
+                            addImport(value, historico, "D", account.get("debit"), account.get("hp"));
                         }
-                        
-                        if(account.get("credit") != null){
-                            addImport(value, historico, "C", (String) account.get("credit"), (String) account.get("hp"));
+
+                        if (account.get("credit") != null) {
+                            addImport(value, historico, "C", account.get("credit"), account.get("hp"));
                         }
                     }
                 });

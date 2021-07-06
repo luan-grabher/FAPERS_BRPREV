@@ -46,7 +46,7 @@ public class FAPERS_BRPREV {
             )) {
                 //Se tiver alguma conta/historico nao encontrado
                 if (Accounts.notFind.size() > 0) {
-                    Accounts.notFindToFiles(accountsFile, hpFile);;
+                    Accounts.notFindToFiles(accountsFile, hpFile);
                     
                     JOptionPane.showMessageDialog(
                             null,

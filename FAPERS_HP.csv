@@ -1,25 +1,55 @@
 #HISTORICO ÚNICO;HP FAPERS
+Acerto Abono;110
+Acerto Ferias;110
+Acerto FGTS Ferias;110
+Acerto FGTSsalario;110
+Acerto INSS Ferias;110
+Acerto pagamento FGTS Ferias;202
+Acerto pagamento INSS Ferias;202
+Acerto pagamento RAT Ferias;202
+Acerto pagamento TERC Ferias;202
+Acerto TERC Ferias;202
 Adiantamento sem ded IR;202
 Anuenio;202
 Anuenio Congelado;202
-Demonstrativo  Férias;202
+avos Abono;110
+avos Ferias;110
+avos FGTSsalario;110
+avos INSS Ferias;110
+avos RAT Ferias;110
+avos TERC Ferias;110
+Demonstrativo adtosal anuenio;202
+Demonstrativo adtosalario;202
+Demonstrativo de Ferias;202
+Demonstrativo Férias;202
 Desc CCA PGS;103
 Desc Emprestimo Consignado;103
 Desc Fapers;202
 Desc Vale Refeicao;202
+Desconto de Ferias;202
+Desconto de Ferias Faper;202
 Despesas cooparticipacao titular;202
 Despesas Medicas Dependente;201
 Despesas Medicas Titular;201
+Despesas odontologicas;201
+Despesas odontologicas titular;201
+FGTS adiantamento;202
+FGTS Ferias folha;202
+FGTS Folha normal;202
 Funcao Gratificada;202
-Grat Repres Conf art  Alinea;202
-INSS ;103
-INSS Demonstrativo Ferias ;110
-INSS ProLabore ;110
-IR ;201
-IR Ferias Recolhido ;103
-IR prolabore ;103
-Liquido Adiantamento salario ;202
-Liquido Folha normal ;202
-Pensao judicial ;103
-Salario Estagiario ;201
-Salario Mensalista ;202
+Grat Repres Conf Alinea;202
+GratRepres Conf artAlinea d E;202
+INSS Demonstrativo Ferias;110
+INSS Demonstrativo Férias;110
+INSS ProLabore;110
+INSS#ferias labore;103
+IR Ferias Recolhido;103
+IR prolabore;103
+IR#ferias;201
+Liquido Adiantamento salario;202
+Liquido Ferias;202
+Liquido Folha normal;202
+Liquido GPS Folha Normal;202
+Pensao judicial;103
+Salario Estagiario;201
+Salario Mensalista;202
