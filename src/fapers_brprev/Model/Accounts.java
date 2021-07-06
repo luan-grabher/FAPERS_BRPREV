@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Accounts {
-    
-    private static final Map<String,String> notFind = new HashMap<>();
+
+    private static final Map<String, String> notFind = new HashMap<>();
 
     private static final Map<String, String> accountsMap = new HashMap<>();
     private static final Map<StringFilter, String> hpMap = new HashMap<>();
@@ -24,8 +24,8 @@ public class Accounts {
 
                 if (!"".equals(cols[0]) && !"".equals(cols[1])) {
                     /*
-                        0 - Conta fapers
-                        1 - Conta Unico 
+                        0 - Conta unico
+                        1 - Conta fapers 
                      */
                     accountsMap.put(cols[0], cols[1]);
                 }
@@ -61,8 +61,8 @@ public class Accounts {
      * @return objeto do mapa se o filtro bater
      */
     public static Map<String, Object> get(String history, String debit, String credit) {
-        if (isZero(debit) && accountsMap.containsKey(debit)) {
-            if (isZero(credit) && accountsMap.containsKey(credit)) {
+        if (isZero(debit) || accountsMap.containsKey(debit)) {
+            if (isZero(credit) || accountsMap.containsKey(credit)) {
                 //Procura historico
                 for (Map.Entry<StringFilter, String> entry : hpMap.entrySet()) {
                     StringFilter filter = entry.getKey();
@@ -70,17 +70,17 @@ public class Accounts {
 
                     if (filter.filterOfString(history)) {
                         Map<String, String> r = new HashMap<>();
-                        r.put("debit", accountsMap.get(debit));
-                        r.put("credit", accountsMap.get(credit));
+                        r.put("debit", accountsMap.getOrDefault(debit, null));
+                        r.put("credit", accountsMap.getOrDefault(credit, null));
                         r.put("hp", accountsMap.get(hp));
                     }
                 }
 
                 //Se não encontrar o historico
-                notFind.put(history, "Historico");                
+                notFind.put(history, "Historico");
                 return null;
             } else {
-                notFind.put(credit, "Conta");                
+                notFind.put(credit, "Conta");
                 return null;
             }
         } else {
@@ -88,10 +88,10 @@ public class Accounts {
             return null;
         }
     }
-    
-    public static void printNotFindInLog(){
-        notFind.forEach((what, type)->{
-            log.append("\r\n").append(type).append(" ").append(what).append("(UNICO) não encontrado nos arquivos DE_PARA.");
+
+    public static void printNotFindInLog() {
+        notFind.forEach((what, type) -> {
+            log.append("\r\n").append(type).append(" '").append(what).append("'(UNICO) não encontrado nos arquivos DE_PARA.");
         });
     }
 

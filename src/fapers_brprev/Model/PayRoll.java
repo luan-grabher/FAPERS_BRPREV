@@ -53,8 +53,13 @@ public class PayRoll {
 
                     if (account != null) {
                         //Adiciona debito e credito
-                        addImport( value, historico, "D", (String) account.get("debit"), (String) account.get("hp"));
-                        addImport(value, historico, "C", (String) account.get("credit"), (String) account.get("hp"));
+                        if(account.get("debit") != null){
+                            addImport( value, historico, "D", (String) account.get("debit"), (String) account.get("hp"));
+                        }
+                        
+                        if(account.get("credit") != null){
+                            addImport(value, historico, "C", (String) account.get("credit"), (String) account.get("hp"));
+                        }
                     }
                 });
             } else {
