@@ -112,9 +112,9 @@ public class Layout {
         map.put("dataDocumento", "");
         map.put("valorLançamento", ""); //O tamanho correto é 15, mas o primeiro será 0 ou o sinal de menos
         map.put("indicadorDebitoCredito", "D");
-        map.put("historicoPadrao", "999");
+        map.put("historicoPadrao", "202");
         map.put("descricaoHistorico", "");
-        map.put("observacao", "Dominio Contábil Folha");
+        map.put("observacao", "MORESCO CONTABILIDADE FOLHA");
 
         return map;
     }
