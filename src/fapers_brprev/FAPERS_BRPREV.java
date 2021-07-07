@@ -7,6 +7,7 @@ import fileManager.FileManager;
 import java.awt.Desktop;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
@@ -27,9 +28,14 @@ public class FAPERS_BRPREV {
             Accounts.createAccountsMap(accountsFile);
             Accounts.createHpMap(hpFile);
 
+            Integer yearNow = Calendar.getInstance().get(Calendar.YEAR);
+
+            Integer[] months = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+            Integer[] years = new Integer[]{yearNow, yearNow - 1, yearNow - 2};
+
             //Pega mes e ano
-            month = Integer.valueOf(JOptionPane.showInputDialog("Insira o mês:"));
-            year = Integer.valueOf(JOptionPane.showInputDialog("Insira o ano:"));
+            month = (Integer) JOptionPane.showInputDialog(null, "Insira o mês:", "Insira o MÊS", JOptionPane.QUESTION_MESSAGE, null, months, months[0]);
+            year = (Integer) JOptionPane.showInputDialog(null, "Insira o ano:", "Insira o ANO", JOptionPane.QUESTION_MESSAGE, null, years, years[0]);
 
             //Mapa com importações em String para fazer
             List<Map<String, String>> imports = new ArrayList<>();
@@ -47,7 +53,7 @@ public class FAPERS_BRPREV {
                 //Se tiver alguma conta/historico nao encontrado
                 if (Accounts.notFind.size() > 0) {
                     Accounts.notFindToFiles(accountsFile, hpFile);
-                    
+
                     JOptionPane.showMessageDialog(
                             null,
                             "Alguns lançamentos não foram para o arquivo de layout porque não foram encontrados debito, credito ou historico nos arquivos de DE_PARA."

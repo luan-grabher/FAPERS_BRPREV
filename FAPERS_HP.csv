@@ -18,8 +18,7 @@ avos FGTS salario;110
 avos INSS Ferias;110
 avos RAT Ferias;110
 avos TERC Ferias;110
-Demonstrativo adtosal anuenio;202
-Demonstrativo adtosalario;202
+Demonstrativo adto sal;202
 Demonstrativo de Ferias;202
 Demonstrativo Férias;202
 Desc CCA PGS;103
@@ -38,7 +37,7 @@ FGTS Ferias folha;202
 FGTS Folha normal;202
 Funcao Gratificada;202
 Grat Repres Conf Alinea;202
-GratRepres Conf artAlinea d E;202
+GratRepres Conf art Alinea;202
 INSS Demonstrativo Ferias;110
 INSS Demonstrativo Férias;110
 INSS ProLabore;110
@@ -62,3 +61,4 @@ avos FGTS salario;202
 Acerto salario;202
 Demonstrativo adto salario;202
 Acerto TERC salario;202
+Demonstrativo Abono Pecuniario;202
