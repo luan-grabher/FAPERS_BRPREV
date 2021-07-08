@@ -70,12 +70,18 @@ public class Accounts {
                     String hp = entry.getValue();
 
                     if (filter.filterOfString(history)) {
-                        Map<String, String> r = new HashMap<>();
-                        r.put("debit", accountsMap.getOrDefault(debit, null));
-                        r.put("credit", accountsMap.getOrDefault(credit, null));
-                        r.put("hp", hp);
-                        
-                        return r;
+                        //Se não for para ignorar a conta
+                        if(!"IGNORAR".equals(accountsMap.getOrDefault(debit, "")) &&
+                                !"IGNORAR".equals(accountsMap.getOrDefault(credit, ""))){
+                            Map<String, String> r = new HashMap<>();
+                            r.put("debit", accountsMap.getOrDefault(debit, null));
+                            r.put("credit", accountsMap.getOrDefault(credit, null));
+                            r.put("hp", hp);
+
+                            return r;
+                        }else{
+                            return null;
+                        }
                     }
                 }
 
