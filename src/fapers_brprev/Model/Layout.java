@@ -106,7 +106,7 @@ public class Layout {
         map.put("conta", "");
         map.put("auxiliar", "");
         map.put("centroCusto", "0");
-        map.put("centroCusteio", "0");
+        map.put("centroCusteio", "9900000000");
         map.put("documento", "");
         map.put("numeroDocumento", "0");
         map.put("dataDocumento", "");
