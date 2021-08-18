@@ -71,15 +71,16 @@ public class Accounts {
 
                     if (filter.filterOfString(history)) {
                         //Se não for para ignorar a conta
-                        if(!"IGNORAR".equals(accountsMap.getOrDefault(debit, "")) &&
-                                !"IGNORAR".equals(accountsMap.getOrDefault(credit, ""))){
+                        if (!"IGNORAR".equals(accountsMap.getOrDefault(debit, ""))
+                                && !"IGNORAR".equals(accountsMap.getOrDefault(credit, ""))
+                                && !"IGNORAR".equals(hp)) {
                             Map<String, String> r = new HashMap<>();
                             r.put("debit", accountsMap.getOrDefault(debit, null));
                             r.put("credit", accountsMap.getOrDefault(credit, null));
                             r.put("hp", hp);
 
                             return r;
-                        }else{
+                        } else {
                             return null;
                         }
                     }
@@ -91,12 +92,17 @@ public class Accounts {
                 notFind.put(credit, "Conta");
             }
         } else {
-            notFind.put(debit, "Conta");            
+            notFind.put(debit, "Conta");
         }
-        
+
         return null;
     }
 
+    /**
+     *
+     * @param accountsFile Arquivo CSV das contas
+     * @param hpFile Arquivo CSV dos historicos
+     */
     public static void notFindToFiles(File accountsFile, File hpFile) {
         //Se tiver algum não encontrado
         if (notFind.size() > 0) {
@@ -112,7 +118,7 @@ public class Accounts {
                     accountsText.append("\r\n").append(what).append(";;");
                 }
             });
-            
+
             //Salva os arquivos
             FileManager.save(accountsFile, accountsText.toString());
             FileManager.save(hpFile, hpText.toString());
