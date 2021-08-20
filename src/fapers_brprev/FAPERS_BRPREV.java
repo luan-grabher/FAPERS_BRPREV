@@ -47,7 +47,7 @@ public class FAPERS_BRPREV {
             File desktopPath = new File(System.getProperty("user.home") + "/Desktop/");
             if (FileManager.save(
                     desktopPath,
-                    "FAPERS_BVPREV_import " + year + "_" + month + ".csv",
+                    "FAPERS_BVPREV_import " + year + "_" + month + ".txt",
                     Layout.getLayoutOfMaps(imports)
             )) {
                 //Se tiver alguma conta/historico nao encontrado
@@ -73,6 +73,9 @@ public class FAPERS_BRPREV {
                 JOptionPane.showMessageDialog(null, "Erro ao salvar o arquivo final!");
             };
         } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
+        } catch (Error e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);
         }
