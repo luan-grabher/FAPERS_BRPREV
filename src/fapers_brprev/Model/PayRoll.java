@@ -48,16 +48,17 @@ public class PayRoll {
                     String debito = e.get("DEBITO") != null ? e.get("DEBITO").toString() : "";
                     String credito = e.get("CREDITO") != null ? e.get("CREDITO").toString() : "";
 
-                    Map<String, String> account = Accounts.get(historico, debito, credito);
+                    Map<String, Object> account = Accounts.get(historico, debito, credito);
 
+                    //Verifica se retornou o mapa e se é um amapa valido que contem o hp
                     if (account != null && account.get("hp") != null) {
                         //Adiciona debito e credito
-                        if (account.get("debit") != null) {
-                            addImport(value, historico, "D", account.get("debit"), account.get("hp"));
+                        if (!((Map<String, String>) account.get("debit")).isEmpty()) {
+                            addImport(value, historico, "D", (Map<String, String>) account.get("debit"),(String) account.get("hp"));
                         }
 
-                        if (account.get("credit") != null) {
-                            addImport(value, historico, "C", account.get("credit"), account.get("hp"));
+                        if (!((Map<String, String>) account.get("credit")).isEmpty()) {
+                            addImport(value, historico, "C", (Map<String, String>) account.get("credit"),(String) account.get("hp"));
                         }
                     }
                 });
@@ -87,12 +88,13 @@ public class PayRoll {
     /*
     * Adiciona a importação 
      */
-    private static void addImport(String value, String history, String debitCredit, String account, String historyCode) {
+    private static void addImport(String value, String history, String debitCredit, Map<String, String> account, String historyCode) {
         Map<String, String> toImport = Layout.getDefaultMap();
         toImport.put("descricaoHistorico", history);
 
         toImport.put("historicoPadrao", historyCode);
-        toImport.put("conta", account);
+        toImport.put("conta", account.get("FAPERS"));
+        toImport.put("centroCusteio", account.get("CENTRO CUSTEIO"));
 
         toImport.put("valorLançamento", value.replaceAll("[^0-9]+", ""));
         toImport.put("indicadorDebitoCredito", debitCredit);

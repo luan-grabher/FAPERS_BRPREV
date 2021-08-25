@@ -1,35 +1,30 @@
 package fapers_brprev.Model;
 
+import fileManager.CSV;
 import fileManager.FileManager;
 import fileManager.StringFilter;
 import java.io.File;
 import java.text.Normalizer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Accounts {
 
     public static final Map<String, String> notFind = new HashMap<>();
-
-    private static final Map<String, String> accountsMap = new HashMap<>();
+    private static final Map<String, Map<String, String>> accountsMap = new HashMap<>();
     private static final Map<StringFilter, String> hpMap = new HashMap<>();
 
     /*Cria mapa com endereçamento da fapers para a conta do único*/
     public static void createAccountsMap(File file) {
         String[] rows = FileManager.getText(file).split("\r\n");
-
-        for (String row : rows) {
-            if (!row.startsWith("#")) {
-                String[] cols = row.split(";", -1);
-
-                if (!"".equals(cols[0]) && !"".equals(cols[1])) {
-                    /*
-                        0 - Conta unico
-                        1 - Conta fapers 
-                     */
-                    accountsMap.put(cols[0], cols[1]);
-                }
-            }
+        
+        //Pega as linhas do csv em mapas
+        List<Map<String, String>> csvAccounts = CSV.getMap(file);
+        
+        for (Map<String, String> csvAccount : csvAccounts) {
+            //coloca no mapa de contas o mapa CSV da conta
+            accountsMap.put(csvAccount.get("UNICO"), csvAccount);
         }
     }
 
@@ -60,23 +55,30 @@ public class Accounts {
      * @param credit Conta do unico credit, para ignorar deixe null
      * @return objeto do mapa se o filtro bater
      */
-    public static Map<String, String> get(String history, String debit, String credit) {
+    public static Map<String, Object> get(String history, String debit, String credit) {
+        //Procura conta de debito
         if (isZero(debit) || accountsMap.containsKey(debit)) {
+            //Procura conta de credito
             if (isZero(credit) || accountsMap.containsKey(credit)) {
+                
+                Map<String, String> debitMap = accountsMap.getOrDefault(debit, new HashMap<>());
+                Map<String, String> creditMap = accountsMap.getOrDefault(credit, new HashMap<>());
+                
                 //Procura historico
                 history = removerAcentos(history).trim();
                 for (Map.Entry<StringFilter, String> entry : hpMap.entrySet()) {
                     StringFilter filter = entry.getKey();
                     String hp = entry.getValue();
-
+                    //Se achar o historico na lista
                     if (filter.filterOfString(history)) {
-                        //Se não for para ignorar a conta
-                        if (!"IGNORAR".equals(accountsMap.getOrDefault(debit, ""))
-                                && !"IGNORAR".equals(accountsMap.getOrDefault(credit, ""))
+                        //Se não for para ignorar alguma conta ou historico
+                        if (!"IGNORAR".equals(debitMap.getOrDefault("FAPERS", ""))
+                                && !"IGNORAR".equals(creditMap.getOrDefault("FAPERS", ""))
                                 && !"IGNORAR".equals(hp)) {
-                            Map<String, String> r = new HashMap<>();
-                            r.put("debit", accountsMap.getOrDefault(debit, null));
-                            r.put("credit", accountsMap.getOrDefault(credit, null));
+                            
+                            Map<String, Object> r = new HashMap<>();
+                            r.put("debit", debitMap);
+                            r.put("credit", creditMap);
                             r.put("hp", hp);
 
                             return r;
