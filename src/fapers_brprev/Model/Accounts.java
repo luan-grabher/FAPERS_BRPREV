@@ -55,7 +55,7 @@ public class Accounts {
      * @param credit Conta do unico credit, para ignorar deixe null
      * @return objeto do mapa se o filtro bater
      */
-    public static Map<String, Object> get(String history, String debit, String credit) {
+    public static Map<String, Map<String, String>> get(String history, String debit, String credit) {
         //Procura conta de debito
         if (isZero(debit) || accountsMap.containsKey(debit)) {
             //Procura conta de credito
@@ -63,6 +63,7 @@ public class Accounts {
                 
                 Map<String, String> debitMap = accountsMap.getOrDefault(debit, new HashMap<>());
                 Map<String, String> creditMap = accountsMap.getOrDefault(credit, new HashMap<>());
+                Map<String, String> historyMap = new HashMap<>();
                 
                 //Procura historico
                 history = removerAcentos(history).trim();
@@ -76,10 +77,12 @@ public class Accounts {
                                 && !"IGNORAR".equals(creditMap.getOrDefault("FAPERS", ""))
                                 && !"IGNORAR".equals(hp)) {
                             
-                            Map<String, Object> r = new HashMap<>();
+                            historyMap.put("hp", hp);
+                            
+                            Map<String, Map<String, String>> r = new HashMap<>();
                             r.put("debit", debitMap);
                             r.put("credit", creditMap);
-                            r.put("hp", hp);
+                            r.put("hp", historyMap);
 
                             return r;
                         } else {

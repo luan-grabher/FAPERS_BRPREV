@@ -48,18 +48,33 @@ public class PayRoll {
                     String debito = e.get("DEBITO") != null ? e.get("DEBITO").toString() : "";
                     String credito = e.get("CREDITO") != null ? e.get("CREDITO").toString() : "";
 
-                    Map<String, Object> account = Accounts.get(historico, debito, credito);
+                    Map<String, Map<String, String>> acConfig = Accounts.get(historico, debito, credito);
 
                     //Verifica se retornou o mapa e se é um amapa valido que contem o hp
-                    if (account != null && account.get("hp") != null) {
-                        //Adiciona debito e credito
-                        if (!((Map<String, String>) account.get("debit")).isEmpty()) {
-                            addImport(value, historico, "D", (Map<String, String>) account.get("debit"),(String) account.get("hp"));
-                        }
+                    if (acConfig != null && !acConfig.get("hp").isEmpty()) {
+                        /**
+                         * MODOS:
+                         *
+                         * 1)  Um para debito, se tiver e outro para credito,
+                         * se tiver
+                         *
+                         * 2) Dois para debito (contrários), se tiver, e dois
+                         * para crédito (contrarios) se tiver.
+                         *
+                         * 3) Dois lctos, se tiver debito e credito, um com a
+                         * conta de deb e outro com a de credito, se só tiver
+                         * um, faz outro contrario com a propria conta.
+                         * 
+                         * Force Inverse: Coloca para cada tipo de lcto um lcto contrario na mesma conta
+                         * Inverse Null: Coloca um lcto contario para a mesma conta se a contrapartida estiver nula
+                         */
 
-                        if (!((Map<String, String>) account.get("credit")).isEmpty()) {
-                            addImport(value, historico, "C", (Map<String, String>) account.get("credit"),(String) account.get("hp"));
-                        }
+                        Boolean forceInverse = false;
+                        Boolean inverseNull = false;
+
+                        acImport("debit", forceInverse, inverseNull, value, historico, acConfig);
+                        acImport("credit", forceInverse, inverseNull, value, historico, acConfig);
+
                     }
                 });
             } else {
@@ -69,6 +84,20 @@ public class PayRoll {
             return imports;
         } else {
             throw new Exception("Erro ao conectar ao banco de dados!");
+        }
+    }
+
+    /**
+     * Adiciona a importação para o tipo de conta definido
+     */
+    private static void acImport(String type, Boolean forceInverse, Boolean inverseNull, String value, String history, Map<String, Map<String, String>> acConfig) {
+        String otherType = type.equals("debit") ? "credit" : "debit";
+
+        if (!((Map<String, String>) acConfig.get(type)).isEmpty()) {
+            addImport(value, history, type.substring(0, 1).toUpperCase(), (Map<String, String>) acConfig.get(type), acConfig.get("hp").get("hp"));
+            if (forceInverse || (inverseNull && ((Map<String, String>) acConfig.get(otherType)).isEmpty())) {
+                addImport(value, history, otherType.substring(0, 1).toUpperCase(), (Map<String, String>) acConfig.get(type), acConfig.get("hp").get("hp"));
+            }
         }
     }
 
