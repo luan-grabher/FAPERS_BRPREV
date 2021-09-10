@@ -25,8 +25,8 @@ Desc CCA PGS;186;DESC CCA PGS CFE FOLHA SALARIAL N/MÊS
 Desc Emprestimo Consignado;162;DESC PARCELA EMPRÉST CFE FL SALARIAL N/MÊS 
 Desc Fapers;158;RET CONTR FAPERS CFE FOLHA SALARIAL N/MÊS 
 Desc Vale Refeicao;159;DESC VR CFE FOLHA SALARIAL N/MÊS
-Desconto de Ferias;IGNORAR;
-Desconto de Ferias Faper;IGNORAR;
+Desconto de Ferias Faper;173;DESCONTO DE FÉRIAS FAPERS
+Desconto de Ferias;116;DESCONTO DE FÉRIAS
 Despesas cooparticipacao titular;160;DESC UNIMED CFE FOLHA SALARIAL N/MÊS
 Despesas Medicas Dependente;160;DESC UNIMED CFE FOLHA SALARIAL N/MÊS
 Despesas Medicas Titular;160;DESC UNIMED CFE FOLHA SALARIAL N/MÊS
@@ -43,12 +43,12 @@ INSS Demonstrativo Férias;167;VLR INSS RET. S/ FÉRIAS
 INSS ProLabore;184;RET INSS S/ GRATIF DE REPRESENTACAO N/MÊS 
 IR prolabore;183;RET  IRRF S/ GRATIF REPRESENTACAO DE DIRIGENTES N/MÊS 
 IR F rias;168;RET IRRF S/ FÉRIAS CFE RECIBO
-Liquido Adiantamento salario;IGNORAR;
-Liquido Ferias;IGNORAR;
-Liquido Folha normal;IGNORAR;
-Liquido GPS Folha Normal;IGNORAR;
+Liquido Adiantamento salario;120;VLR ADTO SALARIO CFE FOLHA SALARIAL NESTE MÊS
+Liquido Ferias;121;VLR FÉRIAS A PAGAR CFE RECIBO
+Liquido Folha normal;122;VLR SALÁRIOS A PAGAR CFE FOLHA PGTO NESTE MÊS
+Liquido GPS Folha Normal;123;VLR INSS A PAGAR REF FOLHA SALARIAL DESTE MÊS
 Pensao judicial;188;DESC PENSAO ALIMENTICIA CFE FOLHA SALARIAL N/MÊS
-Salario Estagiario;IGNORAR;
+Salario Estagiario;148;APROP BOLSA AUXILIO REF ESTAGIOS NESTE MÊS
 Salario Mensalista;152;APROPR SALARIOS CFE FOLHA PGTO N/MÊS
 avos RAT 13º salario;175;PROVISÃO INSS S/ 13º SALARIO 
 Acerto FGTS 13º salario;176;PROVISÃO FGTS S/ 13º SALARIO 
@@ -57,16 +57,16 @@ avos TERC 13º salario;175;PROVISÃO INSS S/ 13º SALARIO
 avos 13º salario;174;PROVISÃO 13º SALÁRIO
 avos FGTS 13º salario;176;PROVISÃO FGTS S/ 13º SALARIO 
 Acerto 13º  salario;174;PROVISÃO 13º SALÁRIO
-Demonstrativo adto 13º salario;IGNORAR;
+Demonstrativo adto 13º salario;119;VLR ADTO 13º SALÁRIO CFE RECIBO
 Acerto TERC 13º salario;175;PROVISÃO INSS S/ 13º SALARIO 
 Demonstrativo Abono Pecuniario;170;BAIXA DE PROVISÃO DE FÉRIAS
 Complemento de abono pecuniario;170;BAIXA DE PROVISÃO DE FÉRIAS
 Compl  de Ferias;170;BAIXA DE PROVISÃO DE FÉRIAS
-Auxilio educacao;IGNORAR;
+Auxilio educacao;118;APROP AUXILIO EDUCAÇÃO CFE FOLHA SALARIAL NESTE MÊS
 Complemento de Ferias;170;BAIXA DE PROVISÃO DE FÉRIAS
 Compl  de Abono Pecuniario;170;BAIXA DE PROVISÃO DE FÉRIAS
 Despesas Medicas;160;DESC UNIMED CFE FOLHA SALARIAL N/MÊS
 INSS;167;
 IR;183;
-Estouro provento folha normal;IGNORAR;
-Estouro Desconto Folha Normal;IGNORAR;
+Estouro provento folha normal;115;
+Estouro Desconto Folha Normal;117;
