@@ -48,7 +48,7 @@ Liquido Ferias;121;VLR FÉRIAS A PAGAR CFE RECIBO
 Liquido Folha normal;122;VLR SALÁRIOS A PAGAR CFE FOLHA PGTO NESTE MÊS
 Liquido GPS Folha Normal;123;VLR INSS A PAGAR REF FOLHA SALARIAL DESTE MÊS
 Pensao judicial;188;DESC PENSAO ALIMENTICIA CFE FOLHA SALARIAL N/MÊS
-Salario Estagiario;148;APROP BOLSA AUXILIO REF ESTAGIOS NESTE MÊS
+Salario Estagiario;148;APROP BOLSA AUXILIO REF ESGIO N/MÊS
 Salario Mensalista;152;APROPR SALARIOS CFE FOLHA PGTO N/MÊS
 avos RAT 13º salario;175;PROVISÃO INSS S/ 13º SALARIO 
 Acerto FGTS 13º salario;176;PROVISÃO FGTS S/ 13º SALARIO 
@@ -66,7 +66,42 @@ Auxilio educacao;118;APROP AUXILIO EDUCAÇÃO CFE FOLHA SALARIAL NESTE MÊS
 Complemento de Ferias;170;BAIXA DE PROVISÃO DE FÉRIAS
 Compl  de Abono Pecuniario;170;BAIXA DE PROVISÃO DE FÉRIAS
 Despesas Medicas;160;DESC UNIMED CFE FOLHA SALARIAL N/MÊS
-INSS;167;
-IR;183;
-Estouro provento folha normal;115;
-Estouro Desconto Folha Normal;117;
+INSS;167;inss
+IR;183;ir
+Estouro provento folha normal;115;Estouro provento Folha Normal 
+Estouro Desconto Folha Normal;117;Estouro Desconto Folha Normal 
+;IGNORAR;IGNORAR quando em branco
+
+Plano de Metas CCT;
+Plano de Metas CCT;
+Atestado doenca com incidencia;
+Dem abono pecuniario outros adicionais;
+Atestado doenca com incidencia;
+Dem abono pecuniario outros adicionais;
+FGTS;
+Desconto de  salario;
+Desconto de adto  salario;
+Reembolso Desconto Indevido;
+Liquido GPS    Salario;
+Complemento  salario;
+Liquido  salario;
+salario;
+salario adicionais outros;
+Comp  salario adicionais outros;
+Estouro provento compl  salario;
+Dem abono pecuniario outros adicionais;
+Desc Vale Transporte;
+Plano de Metas CCT;
+Liquido Folha complementar;
+FGTS Folha complementar;
+FGTS;
+Desconto de adto  salario;
+Liquido  salario;
+salario;
+salario adicionais outros;
+FGTS;
+Desconto de adto  salario;
+Liquido  salario;
+salario;
+salario adicionais outros;
+Dem abono pecuniario outros adicionais;

@@ -14,8 +14,9 @@ import javax.swing.JOptionPane;
 
 public class FAPERS_BRPREV {
 
-    public static Integer month = 8;
-    public static Integer year = 2021;
+    public static Integer month = 6;
+    public static Integer year = 2023;
+    public static File unicoFolhaTxt;
 
     public static void main(String[] args) {
         try {
@@ -37,41 +38,44 @@ public class FAPERS_BRPREV {
             month = (Integer) JOptionPane.showInputDialog(null, "Insira o mês:", "Insira o MÊS", JOptionPane.QUESTION_MESSAGE, null, months, months[0]);
             year = (Integer) JOptionPane.showInputDialog(null, "Insira o ano:", "Insira o ANO", JOptionPane.QUESTION_MESSAGE, null, years, years[0]);
 
+            unicoFolhaTxt = FileManager.getFileFromUser("Arquivo txt da folha do UNICO", "txt");            
+
             //Mapa com importações em String para fazer
             List<Map<String, String>> imports = new ArrayList<>();
-
-            //Pega lctos para importyação do banco
             imports.addAll(PayRoll.getImports());
+
+            Boolean hasAccountsNotFind = Accounts.notFind.size() > 0;
+            if (hasAccountsNotFind){
+                Accounts.notFindToFiles(accountsFile, hpFile);
+
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Alguns lançamentos não foram para o arquivo de layout porque não foram encontrados debito, credito ou historico nos arquivos de DE_PARA."
+                        + "\nEstou abrindo para você completar o arquivo de contas e de historicos."
+                        + "\nComplete as colunas que estiverem em branco."
+                        + "\nPreencha o campo de histórico com os termos que o historico deve ter separados por espaços."
+                        + "\nPreencha as contas da FAPERS e a correspondente do UNICO, o nome da conta não é obrigatório, é apenas para identificação."
+                );
+
+                //Abre o arquivo de contas para a pessoa completar
+                Desktop.getDesktop().open(accountsFile);
+                Desktop.getDesktop().open(hpFile);
+
+                return;
+            }
 
             //Salva o arquivo de texto para importação no formato do Layout correto
             File desktopPath = new File(System.getProperty("user.home") + "/Desktop/");
-            if (FileManager.save(
+            Boolean isErrorOnSaveDesktop = !FileManager.save(
                     desktopPath,
                     "FAPERS_BVPREV_import " + year + "_" + month + ".txt",
                     Layout.getLayoutOfMaps(imports)
-            )) {
-                //Se tiver alguma conta/historico nao encontrado
-                if (Accounts.notFind.size() > 0) {
-                    Accounts.notFindToFiles(accountsFile, hpFile);
+            );
+            if (isErrorOnSaveDesktop) {
+                throw new Exception("Erro ao salvar arquivo de importação na área de trabalho.");
+            }
 
-                    JOptionPane.showMessageDialog(
-                            null,
-                            "Alguns lançamentos não foram para o arquivo de layout porque não foram encontrados debito, credito ou historico nos arquivos de DE_PARA."
-                            + "\nEstou abrindo para você completar o arquivo de contas e de historicos."
-                            + "\nComplete as colunas que estiverem em branco."
-                            + "\nPreencha o campo de histórico com os termos que o historico deve ter separados por espaços."
-                            + "\nPreencha as contas da FAPERS e a correspondente do UNICO, o nome da conta não é obrigatório, é apenas para identificação."
-                    );
-
-                    //Abre o arquivo de contas para a pessoa completar
-                    Desktop.getDesktop().open(accountsFile);
-                    Desktop.getDesktop().open(hpFile);
-                }
-
-                JOptionPane.showMessageDialog(null, "Arquivo layout de importação salvo na área de trabalho");
-            } else {
-                JOptionPane.showMessageDialog(null, "Erro ao salvar o arquivo final!");
-            };
+            JOptionPane.showMessageDialog(null, "Arquivo layout de importação salvo na área de trabalho");           
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage(), "Erro!", JOptionPane.ERROR_MESSAGE);

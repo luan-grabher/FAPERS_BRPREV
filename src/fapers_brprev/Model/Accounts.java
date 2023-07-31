@@ -8,6 +8,7 @@ import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.awt.Desktop;
 
 public class Accounts {
 
@@ -16,14 +17,19 @@ public class Accounts {
     private static final Map<StringFilter, String> hpMap = new HashMap<>();
 
     /*Cria mapa com endereçamento da fapers para a conta do único*/
-    public static void createAccountsMap(File file) {
+    public static void createAccountsMap(File file) throws Exception {
         String[] rows = FileManager.getText(file).split("\r\n");
         
         //Pega as linhas do csv em mapas
         List<Map<String, String>> csvAccounts = CSV.getMap(file);
         
         for (Map<String, String> csvAccount : csvAccounts) {
-            //coloca no mapa de contas o mapa CSV da conta
+            Boolean isFapersEmpty = "".equals(csvAccount.get("FAPERS"));
+            if (isFapersEmpty) {
+                Desktop.getDesktop().open(file);
+                throw new Exception("Existem linhas com FAPERS vazio no arquivo " + file.getName());
+            }
+
             accountsMap.put(csvAccount.get("UNICO"), csvAccount);
         }
     }
@@ -109,25 +115,38 @@ public class Accounts {
      * @param hpFile Arquivo CSV dos historicos
      */
     public static void notFindToFiles(File accountsFile, File hpFile) {
-        //Se tiver algum não encontrado
-        if (notFind.size() > 0) {
-            //Pega texto dos arquivos
-            StringBuilder accountsText = new StringBuilder(FileManager.getText(accountsFile));
-            StringBuilder hpText = new StringBuilder(FileManager.getText(hpFile));
+        Boolean hasNotfind = notFind.size() > 0;
+        if (!hasNotfind) return ;
 
-            //Adiciona abaixo do texto as linhas nao encontradas
-            notFind.forEach((what, type) -> {
-                if (type.equals("Historico")) {
+        //Pega texto dos arquivos
+        StringBuilder accountsText = new StringBuilder(FileManager.getText(accountsFile));
+        StringBuilder hpText = new StringBuilder(FileManager.getText(hpFile));
+
+        //Adiciona abaixo do texto as linhas nao encontradas
+        notFind.forEach((what, type) -> {
+            Boolean isHistorico = type.equals("Historico");
+            Boolean isAccount = !isHistorico;
+
+            if (isHistorico) {
+                Boolean alreadyExists = hpText.indexOf("\r\n" + what + ";") != -1;
+
+                if (!alreadyExists) {
                     hpText.append("\r\n").append(what).append(";");
-                } else {
-                    accountsText.append("\r\n").append(what).append(";;");
                 }
-            });
+            }
 
-            //Salva os arquivos
-            FileManager.save(accountsFile, accountsText.toString());
-            FileManager.save(hpFile, hpText.toString());
-        }
+            if (isAccount){
+                Boolean alreadyExists = accountsText.indexOf("\r\n" + what + ";") != -1;
+
+                if (!alreadyExists) {
+                    accountsText.append("\r\n").append(what).append(";;");            
+                }
+            }
+        });
+
+        //Salva os arquivos
+        FileManager.save(accountsFile, accountsText.toString());
+        FileManager.save(hpFile, hpText.toString());        
     }
 
     public static String removerAcentos(String str) {
