@@ -38,11 +38,18 @@ public class FAPERS_BRPREV {
             month = (Integer) JOptionPane.showInputDialog(null, "Insira o mês:", "Insira o MÊS", JOptionPane.QUESTION_MESSAGE, null, months, months[0]);
             year = (Integer) JOptionPane.showInputDialog(null, "Insira o ano:", "Insira o ANO", JOptionPane.QUESTION_MESSAGE, null, years, years[0]);
 
-            unicoFolhaTxt = FileManager.getFileFromUser("Arquivo txt da folha do UNICO", "txt");            
+            unicoFolhaTxt = FileManager.getFileFromUser("Arquivo de Lançamentos contábeis do UNICO", "txt");
+            if (unicoFolhaTxt == null) {
+                throw new Exception("Arquivo de lançamentos do UNICO não selecionado.");
+            }         
 
             //Mapa com importações em String para fazer
             List<Map<String, String>> imports = new ArrayList<>();
             imports.addAll(PayRoll.getImports());
+
+            if (imports.isEmpty()) {
+                throw new Exception("Não há lançamentos para importar identificados no arquivo de lançamentos do UNICO.");
+            }
 
             Boolean hasAccountsNotFind = Accounts.notFind.size() > 0;
             if (hasAccountsNotFind){
