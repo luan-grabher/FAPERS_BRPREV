@@ -62,6 +62,9 @@ public class Accounts {
      * @return objeto do mapa se o filtro bater
      */
     public static Map<String, Map<String, String>> get(String history, String debit, String credit) {
+        if (history == null) return null;
+         
+
         //Procura conta de debito
         if (isZero(debit) || accountsMap.containsKey(debit)) {
             //Procura conta de credito
@@ -128,6 +131,8 @@ public class Accounts {
             Boolean isAccount = !isHistorico;
 
             if (isHistorico) {
+                System.out.println("Historico nao encontrado: " + what);
+
                 Boolean alreadyExists = hpText.indexOf("\r\n" + what + ";") != -1;
 
                 if (!alreadyExists) {
@@ -136,6 +141,7 @@ public class Accounts {
             }
 
             if (isAccount){
+                System.out.println("Conta nao encontrada: " + what);
                 Boolean alreadyExists = accountsText.indexOf("\r\n" + what + ";") != -1;
 
                 if (!alreadyExists) {
@@ -150,6 +156,9 @@ public class Accounts {
     }
 
     public static String removerAcentos(String str) {
+        if (str == null) {
+            return "";
+        }
         return Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
