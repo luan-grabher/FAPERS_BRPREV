@@ -29,54 +29,30 @@ public class PayRoll {
 
         date = getLastDate();
 
-        // Pega lançamentos no unico
         List<Map<String, Object>> entries = getAccountingEntries();
+        if (entries.isEmpty())
+            throw new Exception("Nenhum lançamento encontrado desntro do arquivo neste mês!");
 
-        // Se nao estiver vazio
-        if (!entries.isEmpty()) {
-            // Percorre lançamentos
-            entries.forEach((Map<String, Object> e) -> {
-                /**
-                 * Pega historico e conta de debito e credito
-                 */
-                String historico = (String) e.getOrDefault("HISTORICO", "");
-                String value = String.valueOf(e.getOrDefault("VALOR", "0.00"));
-                String debito = e.get("DEBITO") != null ? e.get("DEBITO").toString() : "";
-                String credito = e.get("CREDITO") != null ? e.get("CREDITO").toString() : "";
+        // Percorre lançamentos
+        for (Map<String, Object> e : entries) {
+            String historico = (String) e.getOrDefault("HISTORICO", "");
+            String value = String.valueOf(e.getOrDefault("VALOR", "0.00"));
+            String debito = e.get("DEBITO") != null ? e.get("DEBITO").toString() : "";
+            String credito = e.get("CREDITO") != null ? e.get("CREDITO").toString() : "";
 
-                Map<String, Map<String, String>> acConfig = Accounts.get(historico, debito, credito);
+            Map<String, Map<String, String>> normalizedHistoricos_ContasContabeis = Accounts.get(historico, debito, credito);
 
-                // Verifica se retornou o mapa e se é um amapa valido que contem o hp
-                if (acConfig != null && !acConfig.get("hp").isEmpty()) {
-                    /**
-                     * MODOS:
-                     *
-                     * 1) Um para debito, se tiver e outro para credito,
-                     * se tiver
-                     *
-                     * 2) Dois para debito (contrários), se tiver, e dois
-                     * para crédito (contrarios) se tiver.
-                     *
-                     * 3) Dois lctos, se tiver debito e credito, um com a
-                     * conta de deb e outro com a de credito, se só tiver
-                     * um, faz outro contrario com a propria conta.
-                     * 
-                     * Force Inverse: Coloca para cada tipo de lcto um lcto contrario na mesma conta
-                     * Inverse Null: Coloca um lcto contario para a mesma conta se a contrapartida
-                     * estiver nula
-                     */
+            Boolean isErrorOnNormalize = normalizedHistoricos_ContasContabeis == null;
+            if(isErrorOnNormalize)
+                continue;
+            
+            Boolean hasHistoricoPadrao = !normalizedHistoricos_ContasContabeis.get("hp").isEmpty();
+            if(!hasHistoricoPadrao)
+                continue;
 
-                    Boolean forceInverse = false;
-                    Boolean inverseNull = false;
-
-                    acImport("debit", forceInverse, inverseNull, value, historico, acConfig);
-                    acImport("credit", forceInverse, inverseNull, value, historico, acConfig);
-
-                }
-            });
-        } else {
-            throw new Exception("Nenhum lançamento encontrado neste mês!");
-        }
+            acImport("debit",  value, historico, normalizedHistoricos_ContasContabeis);
+            acImport("credit", value, historico, normalizedHistoricos_ContasContabeis);
+        };
 
         return imports;
     }
@@ -84,36 +60,40 @@ public class PayRoll {
     /**
      * Adiciona a importação para o tipo de conta definido
      */
-    private static void acImport(String type, Boolean forceInverse, Boolean inverseNull, String value, String history,
-            Map<String, Map<String, String>> acConfig) {
-        String otherType = type.equals("debit") ? "credit" : "debit";
+    private static void acImport(String type, String value, String history, Map<String, Map<String, String>> normalizedHistoricos_ContasContabeis) {
+        Map<String, String> accountMap = (Map<String, String>) normalizedHistoricos_ContasContabeis.get(type);
+        Map<String, String> hpMap = (Map<String, String>) normalizedHistoricos_ContasContabeis.get("hp");
+        String historicoPadrao = hpMap.get("hp");
 
-        if (!((Map<String, String>) acConfig.get(type)).isEmpty()) {
-            addImport(value, history, type.substring(0, 1).toUpperCase(), (Map<String, String>) acConfig.get(type),
-                    acConfig.get("hp").get("hp"));
-            if (forceInverse || (inverseNull && ((Map<String, String>) acConfig.get(otherType)).isEmpty())) {
-                addImport(value, history, otherType.substring(0, 1).toUpperCase(),
-                        (Map<String, String>) acConfig.get(type), acConfig.get("hp").get("hp"));
-            }
-        }
+        Boolean isTypeEmpty = accountMap.isEmpty();
+        if (isTypeEmpty)
+            return;
+
+        String tipoContaNormalizado  = type.substring(0, 1).toUpperCase();
+        addImport(value, history, tipoContaNormalizado, accountMap, historicoPadrao);    
     }
 
     /**
      * Retorna mapa do SQL com lctos do mes
      */
-    private static List<Map<String, Object>> getAccountingEntries() {             
+    private static List<Map<String, Object>> getAccountingEntries() {
         List<Map<String, Object>> entries = new ArrayList<>();
 
-        List<Map<String,String>> folhaDePagamentoUnico = CSV.getMap(unicoFolhaTxt, ",");
-        for (Map<String,String> folha : folhaDePagamentoUnico) {
+        List<Map<String, String>> folhaDePagamentoUnico = CSV.getMap(unicoFolhaTxt, ";");
+        for (Map<String, String> folha : folhaDePagamentoUnico) {
             Map<String, Object> entry = new HashMap<>();
-            entry.put("HISTORICO", folha.get("6"));
             entry.put("DEBITO", folha.get("3"));
-            entry.put("CREDITO", folha.get("2"));
-            entry.put("VALOR", folha.get("4"));
+            entry.put("CREDITO", folha.get("4"));
+            entry.put("VALOR", folha.get("5"));
+            entry.put("HISTORICO", folha.get("7"));
+
+            Boolean isHeader = entry.get("HISTORICO") == "Histórico";
+            if (isHeader)
+                continue;
+
             entries.add(entry);
         }
-        
+
         return entries;
     }
 

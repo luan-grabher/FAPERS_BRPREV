@@ -17,9 +17,7 @@ public class Accounts {
     private static final Map<StringFilter, String> hpMap = new HashMap<>();
 
     /*Cria mapa com endereçamento da fapers para a conta do único*/
-    public static void createAccountsMap(File file) throws Exception {
-        String[] rows = FileManager.getText(file).split("\r\n");
-        
+    public static void createAccountsMap(File file) throws Exception {      
         //Pega as linhas do csv em mapas
         List<Map<String, String>> csvAccounts = CSV.getMap(file);
         
@@ -62,9 +60,6 @@ public class Accounts {
      * @return objeto do mapa se o filtro bater
      */
     public static Map<String, Map<String, String>> get(String history, String debit, String credit) {
-        if (history == null) return null;
-         
-
         //Procura conta de debito
         if (isZero(debit) || accountsMap.containsKey(debit)) {
             //Procura conta de credito
@@ -103,9 +98,15 @@ public class Accounts {
                 //Se não encontrar o historico
                 notFind.put(history.replaceAll("[^a-zA-Z ]", "").split(" col ")[0].trim(), "Historico");
             } else {
+                if ("Crédito".equals(credit))
+                    return null;
+                
                 notFind.put(credit, "Conta");
             }
         } else {
+            if ("Débito".equals(debit))
+                return null;
+
             notFind.put(debit, "Conta");
         }
 
